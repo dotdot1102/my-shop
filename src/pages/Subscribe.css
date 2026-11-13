@@ -24,14 +24,15 @@
 
 .condition {
   display: flex;
-  gap: 20px;
-  align-items: flex-start;
+  gap: 24px;
+  align-items: center;
 }
 
+/* 아이콘 원본 1:1 비율 유지 */
 .condition-icon {
   flex: none;
-  width: 64px;
-  height: 64px;
+  width: 104px;
+  aspect-ratio: 1 / 1;
 }
 
 .condition-title {
@@ -228,10 +229,36 @@
   font-weight: 600;
 }
 
-.summary-total .muted {
-  font-weight: 500;
-  font-size: 14px;
+.summary-total {
+  margin-top: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
 }
+
+.summary-empty {
+  padding: 10px 0;
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.summary-note {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.pick-note {
+  margin-top: 28px;
+  font-size: 15px;
+}
+
+.pick-note + .pick-tbd {
+  margin-top: 12px;
+}
+
 
 /* P04-S04 완료 확인 */
 .complete {
@@ -252,4 +279,16 @@
   margin-bottom: 40px;
   line-height: 1.8;
   color: var(--ink-muted);
+}
+
+/* 결제 방식 */
+.pay-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.pay-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }

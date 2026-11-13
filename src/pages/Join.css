@@ -38,6 +38,12 @@
   line-height: 1.45;
 }
 
+.join-agree {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .join-check {
   display: flex;
   align-items: center;

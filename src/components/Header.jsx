@@ -1,8 +1,18 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { logOut } from '../lib/storage.js'
+import { useMember } from '../lib/useMember.js'
 import './Header.css'
 
 // 공통 메뉴 M-01 ~ M-04
 function Header() {
+  const member = useMember()
+  const navigate = useNavigate()
+
+  function handleLogOut() {
+    logOut()
+    navigate('/')
+  }
+
   return (
     <header className="header">
       <nav className="header-nav container" aria-label="주 메뉴">
@@ -26,9 +36,21 @@ function Header() {
           <NavLink to="/subscribe" id="M-03" className="menu-link">
             정기배송 신청
           </NavLink>
-          <NavLink to="/join" id="M-04" className="btn btn-secondary header-btn">
-            가입 · 로그인
-          </NavLink>
+          {/* 로그인 상태면 로그아웃 (답변 2026-11-13) */}
+          {member ? (
+            <button
+              type="button"
+              id="M-04"
+              className="btn btn-secondary header-btn"
+              onClick={handleLogOut}
+            >
+              로그아웃
+            </button>
+          ) : (
+            <NavLink to="/join" id="M-04" className="btn btn-secondary header-btn">
+              가입 · 로그인
+            </NavLink>
+          )}
         </div>
       </nav>
     </header>

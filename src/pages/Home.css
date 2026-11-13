@@ -1,29 +1,43 @@
 /* P01-S01 첫 화면 */
+/* 왼쪽 빈 영역에 글, 나머지는 이미지가 오른쪽 끝까지 채움 */
 .hero {
-  padding-top: 112px;
-  padding-bottom: 160px;
-}
-
-.hero-inner {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 64px;
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   animation: gi-fade-in 0.4s ease-out both;
 }
 
+.hero-panel {
+  /* 글 왼쪽 여백: 최대 80px(space-20) */
+  --hero-offset: clamp(var(--gutter), calc((100cqw - var(--content-max)) / 2 + var(--gutter)), 80px);
+
+  width: calc(var(--hero-offset) + clamp(420px, 35cqw, 500px));
+  padding: 32px 48px 32px var(--hero-offset);
+}
+
 .hero-text {
-  flex: 7 1 560px;
-  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 48px;
+  gap: clamp(24px, 2.2vw, 32px);
+}
+
+/* 좁은 화면: 글 위, 이미지 아래 (이미지는 화면 너비 전체, 원본 비율) */
+@media (max-width: 1100px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-panel {
+    width: auto;
+    padding: 80px var(--gutter);
+  }
 }
 
 .hero-title {
   font-family: var(--font-serif);
   font-weight: 400;
-  font-size: clamp(34px, 3.2vw, 46px);
+  font-size: clamp(30px, 2.8vw, 40px);
   line-height: 1.45;
   letter-spacing: -0.02em;
 }
@@ -33,16 +47,9 @@
 }
 
 .hero-body {
-  font-size: 17px;
-  line-height: 1.85;
+  font-size: 16px;
+  line-height: 1.8;
   color: var(--ink-muted);
-}
-
-.hero-photo {
-  flex: 5 1 360px;
-  min-width: 0;
-  aspect-ratio: 4 / 5;
-  max-height: 600px;
 }
 
 /* 흰 띠 (상품 · 브랜드) */
@@ -124,6 +131,16 @@
   margin-top: 10px;
 }
 
+/* 언제·어떻게 먹을지 — 미정 표시와 같은 자리, 실선 */
+.product-howto {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-muted);
+}
+
 /* P01-S03 가입 혜택 한 줄 */
 .benefit {
   padding-top: 120px;
@@ -177,16 +194,8 @@
   line-height: 1.55;
 }
 
-.brand-tbd {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 20px 0;
-  border-top: 1px dashed var(--line-input);
-  border-bottom: 1px dashed var(--line-input);
-}
-
-.brand-tbd p {
-  font-size: 13px;
+.brand-body {
+  font-size: 16px;
+  line-height: 1.8;
   color: var(--ink-muted);
 }

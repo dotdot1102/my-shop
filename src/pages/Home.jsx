@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import ArrowIcon from '../components/ArrowIcon.jsx'
 import { products } from '../data/products.js'
-import heroImage from '../assets/images/P01-S01-main.jpg'
+import HeroSlider from '../components/HeroSlider.jsx'
 import brandImage from '../assets/images/P01-S04.brand.jpg'
 import './Home.css'
 
@@ -10,18 +10,18 @@ function Home() {
   return (
     <main id="top">
       {/* P01-S01 첫 화면 */}
-      <section id="P01-S01" className="container hero" aria-labelledby="hero-title">
-        <div className="hero-inner">
+      <section id="P01-S01" className="hero" aria-labelledby="hero-title">
+        <div className="hero-panel">
           <div className="hero-text">
             <h1 id="hero-title" className="hero-title">
-              <span>계절이 키운 그대로,</span>
-              <span>몸이 먼저 알아보는 한 잔.</span>
+              <span>하루 한 번, 나를 챙기는</span>
+              <span>가벼운 루틴</span>
             </h1>
             <p className="hero-body">
-              출근 시간과 생활 패턴을 고르면
+              아침에는 주스 한 잔, 출출할 땐 사과칩 한 줌.
+              <br />내 생활에 맞는 조합을 골라
               <br />
-              언제 무엇을 먹을지 정기배송 구성으로 제안해 드려요.
-              <br />주 1회 배송, 해지·변경은 조건 없이 언제든 간단하게.
+              꾸준히 즐길 나만의 루틴을 만들어 보세요.
             </p>
             <div>
               <Link to="/routine" id="P01-B01" className="btn btn-primary">
@@ -30,10 +30,8 @@ function Home() {
               </Link>
             </div>
           </div>
-          <div className="photo hero-photo">
-            <img src={heroImage} alt="그린이슈 주스 세 병과 당근칩, 사과링" />
-          </div>
         </div>
+        <HeroSlider />
       </section>
 
       {/* P01-S02 상품 섹션 */}
@@ -61,7 +59,11 @@ function Home() {
                     </span>
                     <span className="tag">예시 가격</span>
                   </p>
-                  <p className="tbd product-tbd">언제 · 어떻게 먹을지 — 추후 결정</p>
+                  {p.howTo ? (
+                    <p className="product-howto">{p.howTo}</p>
+                  ) : (
+                    <p className="tbd product-tbd">언제 · 어떻게 먹을지 — 추후 결정</p>
+                  )}
                 </div>
               </article>
             ))}
@@ -92,13 +94,12 @@ function Home() {
               <h2 id="brand-title" className="brand-title">
                 꼭 필요하지 않은 것은 덜어냅니다.
               </h2>
-              <div className="brand-tbd">
-                <p>본문 4줄 · 재료와 만드는 방식 — 추후 결정</p>
-                <span className="skeleton-bar" aria-hidden="true" style={{ width: '100%' }} />
-                <span className="skeleton-bar" aria-hidden="true" style={{ width: '94%' }} />
-                <span className="skeleton-bar" aria-hidden="true" style={{ width: '97%' }} />
-                <span className="skeleton-bar" aria-hidden="true" style={{ width: '62%' }} />
-              </div>
+              <p className="brand-body">
+                주스 한 잔과 사과칩 한 줌으로
+                <br />내 하루에 작은 습관을 더해 보세요.
+                <br />
+                부담 없이 이어가는 나만의 루틴을 응원합니다.
+              </p>
               <div>
                 <Link to="/routine" id="P01-B04" className="btn btn-secondary">
                   내 루틴 만들기
