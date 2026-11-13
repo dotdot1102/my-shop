@@ -1,0 +1,26 @@
+<!-- @dsCard group="Content" height=470 subtitle="홈 P01-S02 상품 카드" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>ProductCard — preview</title>
+<style>
+body{margin:0;background:var(--surface-white);font-family:var(--font-sans);color:var(--ink);word-break:keep-all}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:var(--space-8);padding:var(--space-6)}
+.card{display:flex;flex-direction:column;gap:var(--space-5)}
+.ph{aspect-ratio:4/5;background:var(--surface-photo);border-radius:var(--radius-none);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.ph span{font-size:13px;color:var(--ink-muted);text-align:center}
+.t{display:flex;flex-direction:column;gap:6px}
+h3{margin:0;font-size:17px;font-weight:600;line-height:1.5}
+.ing{margin:0;font-size:14px;color:var(--ink-muted)}
+.pr{margin:6px 0 0;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.pr b{font-size:15px;font-weight:600}
+.tag{font-size:12px;color:var(--ink-muted);border:1px solid var(--line);border-radius:var(--radius-xs);padding:1px 6px}
+</style></head>
+<body>
+<div id="root" class="grid">
+<article class="card"><div class="ph"><span>이미지 자리<br>ABC 주스 + 재료</span></div><div class="t"><h3>ABC 주스</h3><p class="ing">사과 · 비트 · 당근</p><p class="pr"><b>300mL · 6,000원</b><span class="tag">예시 가격</span></p></div></article>
+<article class="card"><div class="ph"><span>이미지 자리<br>그린 블렌드 + 재료</span></div><div class="t"><h3>그린 블렌드</h3><p class="ing">셀러리 · 양배추 · 케일 · 레몬</p><p class="pr"><b>300mL · 6,500원</b><span class="tag">예시 가격</span></p></div></article>
+<article class="card"><div class="ph"><span>이미지 자리<br>사과칩 + 재료</span></div><div class="t"><h3>사과칩</h3><p class="ing">사과</p><p class="pr"><b>20g · 4,500원</b><span class="tag">예시 가격</span></p></div></article>
+</div>
+<script></script>
+</body>
+</html>

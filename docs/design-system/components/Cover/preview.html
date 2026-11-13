@@ -1,0 +1,50 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Green Issue</title>
+<style>
+html,body{margin:0;height:100%}
+body{background:var(--surface-page);color:var(--ink);font-family:var(--font-sans);overflow:hidden}
+.cover{position:relative;height:288px;overflow:hidden}
+.art{position:absolute;top:0;left:480px;width:480px;height:288px;overflow:hidden}
+.art svg{display:block;width:480px;height:288px}
+.deep{fill:var(--brand-deep)}
+.brand{fill:var(--brand)}
+.hover{fill:var(--brand-hover)}
+.photo{fill:var(--surface-photo)}
+.blk{rx:var(--radius-none)}
+.rule{stroke:var(--line);stroke-width:1}
+.words{position:absolute;left:var(--space-8);bottom:var(--space-8);max-width:440px}
+.name{margin:0;font-family:var(--font-display);font-size:72px;line-height:1.05;font-weight:400;letter-spacing:0;color:var(--brand-deep)}
+.tag{margin:var(--space-3) 0 0 2px;font-size:14px;line-height:20px;color:var(--ink-muted)}
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 288" width="480" height="288">
+<!--
+  blocks      brand-deep 160×288 slab bled off top and bottom · brand 200×160 bled off the top-right · brand-hover 120×128 · surface-photo 80×120 — about 40% of 960×288
+  arrangement one tall deep-green slab with satellites, flush square edges like the square photos and cards
+  pattern     hairline rules, from "editorial, serif, borders not shadows": three line-token rules crossing the blocks, the rule that follows every section title
+  scales      sides in space-8 / space-20 / space-30 / space-40 multiples; corners radius-none; rule pitch space-16 then space-30 · stroke 1px
+-->
+<rect class="photo blk" x="40" y="168" width="80" height="120"/>
+<rect class="deep blk" x="120" y="0" width="160" height="288"/>
+<rect class="brand blk" x="280" y="0" width="200" height="160"/>
+<rect class="hover blk" x="280" y="160" width="120" height="128"/>
+<line class="rule" x1="0" y1="64.5" x2="480" y2="64.5"/>
+<line class="rule" x1="0" y1="128.5" x2="480" y2="128.5"/>
+<line class="rule" x1="0" y1="248.5" x2="480" y2="248.5"/>
+</svg>
+</div>
+<div class="words">
+<p class="name">Green Issue</p>
+<p class="tag" lang="ko">계절이 키운 재료를 그대로, 꼭 필요하지 않은 것은 덜어냅니다.</p>
+</div>
+</div>
+<script></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!-- @dsCard group="Actions" height=150 subtitle="주요 · 보조 · 핵심 행동 (호버 상태 포함)" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Button — preview</title>
+<style>
+body{margin:0;background:var(--surface-page);font-family:var(--font-sans);color:var(--ink);word-break:keep-all}
+.row{display:flex;flex-wrap:wrap;gap:var(--space-4);align-items:center;padding:var(--space-6)}
+.b{display:inline-flex;align-items:center;justify-content:center;gap:12px;box-sizing:border-box;border-radius:var(--radius-sm);font:inherit;font-size:16px;font-weight:500;text-decoration:none;cursor:pointer;transition:background-color .18s ease,color .18s ease,border-color .18s ease}
+.p{height:var(--button-height);padding:0 32px;background:var(--brand);color:var(--on-brand);border:1px solid var(--brand)}
+.s{height:52px;padding:0 28px;background:transparent;color:var(--ink);border:1px solid var(--ink);font-size:15px}
+.k{height:var(--button-height);width:var(--form-max);max-width:100%;background:var(--brand);color:var(--on-brand);border:1px solid var(--brand)}
+.b:hover,.hov{background:var(--brand-hover);color:var(--on-brand-hover);border-color:var(--brand-hover)}
+.cap{font-size:12px;color:var(--ink-muted);width:100%;margin:0}
+</style></head>
+<body>
+<div id="root">
+<div class="row">
+<a class="b p" href="#">내 루틴 만들기<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+<a class="b p hov" href="#">호버</a>
+<a class="b s" href="#">내 루틴 만들기</a>
+<a class="b s hov" href="#">호버</a>
+<button class="b k" type="button">정기배송 신청하기</button>
+</div>
+</div>
+<script></script>
+</body>
+</html>

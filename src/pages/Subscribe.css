@@ -1,0 +1,255 @@
+.subscribe {
+  padding-top: 120px;
+  padding-bottom: 180px;
+}
+
+.subscribe-title {
+  margin-bottom: 64px;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+/* P04-S01 조건 안내 */
+.conditions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+  padding: 40px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 120px;
+}
+
+.condition {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.condition-icon {
+  flex: none;
+  width: 64px;
+  height: 64px;
+}
+
+.condition-title {
+  margin-bottom: 6px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.condition-body {
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+/* P04-S02 구성 선택 */
+.pick {
+  margin-bottom: 120px;
+}
+
+.pick-heading,
+.form-heading {
+  margin-bottom: 40px;
+}
+
+.tabs {
+  display: flex;
+  gap: 32px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
+}
+
+.tab {
+  padding: 14px 0;
+  margin-bottom: -1px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--ink);
+}
+
+.tab.is-on {
+  border-bottom-color: var(--ink);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.pick-row {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: center;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--skeleton);
+}
+
+.pick-photo {
+  width: 96px;
+  height: 120px;
+}
+
+.pick-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pick-name {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.pick-sub {
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line-input);
+  border-radius: 4px;
+  background: var(--surface-white);
+}
+
+.stepper button {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 18px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background-color 0.18s ease;
+}
+
+.stepper button:hover {
+  background: var(--surface-photo);
+}
+
+.stepper span {
+  min-width: 40px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.pick-benefit {
+  margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 15px;
+}
+
+.tag-brand {
+  font-weight: 600;
+  color: var(--brand);
+  border-color: var(--brand);
+  padding: 1px 8px;
+}
+
+.pick-tbd {
+  margin-top: 28px;
+}
+
+/* P04-S03 신청 양식 */
+.apply {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 64px;
+  align-items: flex-start;
+}
+
+.apply-fields {
+  flex: 6 1 400px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.apply-side {
+  flex: 5 1 360px;
+  min-width: 0;
+  max-width: var(--form-max);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.summary {
+  background: var(--surface-white);
+  border: 1px solid var(--line);
+  padding: 32px;
+}
+
+.summary-title {
+  margin-bottom: 12px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  font-size: 15px;
+}
+
+.summary-row .muted {
+  font-size: 13px;
+}
+
+.summary-rule {
+  height: 1px;
+  background: var(--ink);
+  margin: 14px 0;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.summary-total .muted {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* P04-S04 완료 확인 */
+.complete {
+  max-width: 640px;
+  padding-top: 40px;
+  scroll-margin-top: 40px;
+}
+
+.complete-title {
+  margin-bottom: 20px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.45;
+}
+
+.complete-body {
+  margin-bottom: 40px;
+  line-height: 1.8;
+  color: var(--ink-muted);
+}

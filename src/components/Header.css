@@ -1,0 +1,65 @@
+.header {
+  border-bottom: 1px solid var(--line);
+}
+
+.header-nav {
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.header-logo:hover {
+  color: var(--ink);
+}
+
+.header-logo span {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.header-menu {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  flex-wrap: wrap;
+}
+
+.menu-link {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 8px;
+  transition: text-decoration-color 0.18s ease;
+}
+
+.menu-link:hover {
+  color: var(--ink);
+  text-decoration-color: var(--brand);
+}
+
+/* 현재 페이지: 글자 포인트색 */
+.menu-link.active,
+.menu-link.active:hover {
+  color: var(--brand);
+}
+
+.header-btn {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 14px;
+}

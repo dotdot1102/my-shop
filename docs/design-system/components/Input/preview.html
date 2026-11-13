@@ -1,0 +1,20 @@
+<!-- @dsCard group="Forms" height=200 subtitle="기본 / 포커스" -->
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Input — preview</title>
+<style>
+body{margin:0;background:var(--surface-white);font-family:var(--font-sans);color:var(--ink)}
+.wrap{display:flex;flex-direction:column;gap:var(--space-6);padding:var(--space-6);max-width:var(--form-max)}
+.f{display:flex;flex-direction:column;gap:var(--space-2)}
+label{font-size:14px;font-weight:500}
+input{height:var(--input-height);box-sizing:border-box;padding:0 var(--space-4);border:1px solid var(--line-input);border-radius:var(--radius-sm);background:var(--surface-white);font:inherit;font-size:15px;color:var(--ink)}
+input:focus,input.focus{outline:2px solid var(--brand);outline-offset:1px}
+</style></head>
+<body>
+<div id="root" class="wrap">
+<div class="f"><label for="a">입력 항목</label><input id="a" type="text"></div>
+<div class="f"><label for="b">포커스 상태</label><input id="b" class="focus" type="text"></div>
+</div>
+<script></script>
+</body>
+</html>
