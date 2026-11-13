@@ -20,7 +20,10 @@ export function markIntroSeen() {
 // 앱을 처음 열 때 한 번만 판단 (페이지 이동 중에는 다시 뜨지 않음)
 export function shouldShowIntro() {
   if (typeof window === 'undefined') return false
-  if (window.location.pathname !== '/') return false
+  // 홈 주소 = 배포 기본 경로(예: /my-shop/). 끝 슬래시 유무는 같게 봄
+  const home = import.meta.env.BASE_URL.replace(/\/$/, '')
+  const path = window.location.pathname.replace(/\/$/, '')
+  if (path !== home) return false
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false
   return !hasSeenIntro()
 }
