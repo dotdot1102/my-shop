@@ -34,9 +34,10 @@
   }
 }
 
+/* 히어로 타이틀 볼드 700 (답변 2026-11-16, 2안) */
 .hero-title {
   font-family: var(--font-serif);
-  font-weight: 400;
+  font-weight: 700;
   font-size: clamp(30px, 2.8vw, 40px);
   line-height: 1.45;
   letter-spacing: -0.02em;
@@ -70,6 +71,11 @@
 /* P01-S02 상품 섹션 */
 .products-title {
   margin-bottom: 72px;
+}
+
+/* '계절이 키운 재료 그대로' 볼드 700 (답변 2026-11-16, 2안) — 다른 섹션 제목은 그대로 */
+.products-title h2 {
+  font-weight: 700;
 }
 
 .product-grid {
