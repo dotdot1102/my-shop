@@ -7,11 +7,13 @@ import sweetPotatoChips from '../assets/images/P01-S02.sweetpotato.jpg'
 
 // 상품 6개 (출처: PROJECT_CONTEXT.md 1. 상품) — 당근칩·고구마칩 추가 (답변 2026-11-16)
 // description: 상품 상세 설명 (답변 2026-11-16)
+// name: 포장지와 같은 영문 이름, nameKo: 아래에 작게 붙는 한글 이름 (답변 2026-11-16)
 // howTo: 언제·어떻게 먹을지 (출처: 와이어프레임 P-03 루틴 결과, 답변 2026-11-13). ABC 주스는 [미정]
 export const products = [
   {
     id: 'abc',
-    name: 'ABC 주스',
+    name: 'ABC Juice',
+    nameKo: 'ABC 주스',
     ingredients: '사과 · 비트 · 당근',
     volume: '300mL',
     price: '6,000원',
@@ -22,7 +24,8 @@ export const products = [
   },
   {
     id: 'cca',
-    name: 'CCA 주스',
+    name: 'CCA Juice',
+    nameKo: 'CCA 주스',
     ingredients: '당근 · 양배추 · 사과',
     volume: '300mL',
     price: '6,000원',
@@ -33,7 +36,8 @@ export const products = [
   },
   {
     id: 'green',
-    name: '그린 블렌드',
+    name: 'Green Blend',
+    nameKo: '그린 블렌드',
     ingredients: '셀러리 · 양배추 · 케일 · 레몬',
     volume: '300mL',
     price: '6,500원',
@@ -44,7 +48,8 @@ export const products = [
   },
   {
     id: 'chip',
-    name: '사과칩',
+    name: 'Apple Rings',
+    nameKo: '사과링',
     ingredients: '사과',
     volume: '20g',
     price: '4,500원',
@@ -55,7 +60,8 @@ export const products = [
   },
   {
     id: 'carrot',
-    name: '당근칩',
+    name: 'Carrot Chips',
+    nameKo: '당근칩',
     ingredients: '당근',
     volume: '20g',
     price: '5,000원',
@@ -66,7 +72,8 @@ export const products = [
   },
   {
     id: 'sweetpotato',
-    name: '고구마칩',
+    name: 'Sweet Potato Chips',
+    nameKo: '고구마칩',
     ingredients: '고구마',
     volume: '20g',
     price: '5,000원',

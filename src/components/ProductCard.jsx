@@ -21,10 +21,14 @@ function ProductCard({ product: p }) {
     <article className="product-card">
       <Link to={`/products/${p.id}`} className="product-card-link">
         <div className="photo product-photo">
-          <img src={p.image} alt={`${p.name}와 재료`} />
+          <img src={p.image} alt={`${p.nameKo} 상품과 재료`} />
         </div>
         <div className="product-info">
-          <h3 className="product-name">{p.name}</h3>
+          {/* 영문 이름 + 아래 작은 한글 이름 (답변 2026-11-16) */}
+          <h3 className="product-name">
+            {p.name}
+            <span className="product-name-ko">{p.nameKo}</span>
+          </h3>
           <p className="product-ingredients">{p.ingredients}</p>
           <p className="product-price-row">
             <span className="product-price">

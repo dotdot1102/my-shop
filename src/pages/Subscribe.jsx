@@ -31,6 +31,7 @@ function loadRoutineItems() {
   return buildRoutine(saved?.tick ?? 2, saved?.chip ?? 0).map(({ product, weeklyQty }) => ({
     id: `r-${product.id}`,
     name: product.name,
+    nameKo: product.nameKo,
     sub: `${product.ingredients} · ${product.volume}`,
     image: product.image,
     unitPrice: product.unitPrice,
@@ -41,6 +42,7 @@ function loadRoutineItems() {
 const DIRECT_ITEMS = products.map((p) => ({
   id: p.id,
   name: p.name,
+  nameKo: p.nameKo,
   sub: `${p.ingredients} · ${p.volume}`,
   image: p.image,
   unitPrice: p.unitPrice,
@@ -192,7 +194,10 @@ function Subscribe() {
                     <div className="photo photo-empty pick-photo">이미지</div>
                   )}
                   <div className="pick-info">
-                    <h3 className="pick-name">{it.name}</h3>
+                    <h3 className="pick-name">
+                      {it.name}
+                      <span className="pick-name-ko">{it.nameKo}</span>
+                    </h3>
                     <p className="pick-sub">{it.sub}</p>
                   </div>
                   <div role="group" aria-label={`${it.name} 수량`} className="stepper">

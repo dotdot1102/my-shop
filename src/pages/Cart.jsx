@@ -38,6 +38,7 @@ function Cart() {
                       <Link to={`/products/${id}`} className="cart-name-link">
                         {product.name}
                       </Link>
+                      <span className="pick-name-ko">{product.nameKo}</span>
                     </h2>
                     <p className="pick-sub">
                       {product.ingredients} · {product.volume} · {product.price}

@@ -179,7 +179,10 @@ function SingleOrder({ id }) {
                 <img src={product.image} alt="" />
               </div>
               <div className="pick-info">
-                <h2 className="pick-name">{product.name}</h2>
+                <h2 className="pick-name">
+                  {product.name}
+                  <span className="pick-name-ko">{product.nameKo}</span>
+                </h2>
                 <p className="pick-sub">
                   {product.ingredients} · {product.volume} · {product.price}
                 </p>
@@ -340,7 +343,10 @@ function CartOrder() {
                 <img src={product.image} alt="" />
               </div>
               <div className="pick-info">
-                <h2 className="pick-name">{product.name}</h2>
+                <h2 className="pick-name">
+                  {product.name}
+                  <span className="pick-name-ko">{product.nameKo}</span>
+                </h2>
                 <p className="pick-sub">
                   {product.ingredients} · {product.volume} · {product.price}
                 </p>

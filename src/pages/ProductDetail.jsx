@@ -41,12 +41,16 @@ function ProductDetail() {
 
         <div className="detail-inner">
           <div className="photo detail-photo">
-            <img src={product.image} alt={`${product.name}와 재료`} />
+            <img src={product.image} alt={`${product.nameKo} 상품과 재료`} />
           </div>
 
           <div className="detail-info">
             <div className="detail-head">
-              <h1 className="page-title detail-name">{product.name}</h1>
+              {/* 영문 이름 + 아래 작은 한글 이름 (답변 2026-11-16) */}
+              <h1 className="page-title detail-name">
+                {product.name}
+                <span className="detail-name-ko">{product.nameKo}</span>
+              </h1>
               <p className="detail-sub">
                 {product.ingredients} · {product.volume}
               </p>

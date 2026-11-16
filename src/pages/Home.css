@@ -158,6 +158,14 @@
   line-height: 1.5;
 }
 
+/* 영문 이름 아래 작은 한글 이름 (답변 2026-11-16) */
+.product-name-ko {
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink-muted);
+}
+
 .product-ingredients {
   font-size: 14px;
   line-height: 1.6;
