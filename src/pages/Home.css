@@ -78,6 +78,15 @@
   font-weight: 700;
 }
 
+/* 상품 더보기 페이지 제목(h1)도 홈 제목과 같은 모양 (답변 2026-11-16) */
+.products-title h1 {
+  flex: none;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.4;
+}
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

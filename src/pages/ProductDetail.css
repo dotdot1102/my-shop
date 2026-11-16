@@ -19,6 +19,14 @@
   min-height: 44px;
 }
 
+/* 상품 상세의 '상품 목록' — 테두리 버튼 + 화살표 (답변 2026-11-16, A안) */
+.detail-back .detail-back-btn {
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px;
+  font-size: 15px;
+}
+
 .detail-inner {
   display: flex;
   flex-wrap: wrap;
@@ -45,6 +53,11 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* 상품 이름 볼드 700 (답변 2026-11-16) */
+.detail-name {
+  font-weight: 700;
 }
 
 .detail-sub {

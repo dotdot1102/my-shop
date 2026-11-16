@@ -24,7 +24,17 @@ function ProductDetail() {
     <div className="band-white">
       <main className="container detail">
         <p className="detail-back">
-          <Link to="/products" className="text-link">
+          {/* 테두리 버튼 + 왼쪽 화살표 (답변 2026-11-16, A안) */}
+          <Link to="/products" className="btn btn-secondary detail-back-btn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path
+                d="M10 3.5 5.5 8l4.5 4.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
             상품 목록
           </Link>
         </p>
