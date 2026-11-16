@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { logIn, signUp } from '../lib/storage.js'
+import { RequiredMark } from '../components/ContactFields.jsx'
 import './Join.css'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PASSWORD_MIN = 8
 
 // 가입 입력 항목: 이름 · 이메일 · 비밀번호 + 필수 동의 (답변 2026-11-13)
 function validateJoin(form) {
@@ -11,7 +13,15 @@ function validateJoin(form) {
   if (!form.name.trim()) errors.name = '이름을 입력해 주세요.'
   if (!form.email.trim()) errors.email = '이메일을 입력해 주세요.'
   else if (!EMAIL_PATTERN.test(form.email.trim())) errors.email = '이메일 형식을 확인해 주세요.'
+  // 비밀번호 8자 이상 + 확인 칸 (답변 2026-11-16)
   if (!form.password) errors.password = '비밀번호를 입력해 주세요.'
+  else if (form.password.length < PASSWORD_MIN) {
+    errors.password = `비밀번호를 ${PASSWORD_MIN}자 이상으로 입력해 주세요.`
+  }
+  if (!form.passwordConfirm) errors.passwordConfirm = '비밀번호를 한 번 더 입력해 주세요.'
+  else if (form.password && form.passwordConfirm !== form.password) {
+    errors.passwordConfirm = '비밀번호가 서로 달라요.'
+  }
   if (!form.agree) errors.agree = '필수 동의 항목에 체크해 주세요.'
   return errors
 }
@@ -24,10 +34,15 @@ function validateLogin(form) {
   return errors
 }
 
-function Field({ id, label, type = 'text', autoComplete, value, error, onChange }) {
+// 칸 이름 옆 '*' = 필수, hint = 칸 아래 안내 (답변 2026-11-16)
+function Field({ id, label, type = 'text', autoComplete, value, error, onChange, hint }) {
+  const describedBy = [error && `${id}-error`, hint && `${id}-hint`].filter(Boolean).join(' ')
   return (
     <div className="field">
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id}>
+        {label}
+        <RequiredMark />
+      </label>
       <input
         className={error ? 'input is-error' : 'input'}
         id={id}
@@ -35,9 +50,15 @@ function Field({ id, label, type = 'text', autoComplete, value, error, onChange 
         autoComplete={autoComplete}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        aria-required="true"
         aria-invalid={Boolean(error)}
-        aria-describedby={error ? `${id}-error` : undefined}
+        aria-describedby={describedBy || undefined}
       />
+      {hint && !error && (
+        <p id={`${id}-hint`} className="field-hint">
+          {hint}
+        </p>
+      )}
       {error && (
         <p id={`${id}-error`} className="field-error">
           {error}
@@ -55,7 +76,13 @@ function Join() {
   // P-03에서 왔으면 P-03으로, 아니면 P-01로 돌아감
   const returnTo = location.state?.from === '/routine' ? '/routine' : '/'
 
-  const [join, setJoin] = useState({ name: '', email: '', password: '', agree: false })
+  const [join, setJoin] = useState({
+    name: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
+    agree: false,
+  })
   const [joinErrors, setJoinErrors] = useState({})
   const [login, setLogin] = useState({ email: '', password: '' })
   const [loginErrors, setLoginErrors] = useState({})
@@ -114,6 +141,9 @@ function Join() {
             <h1 id="join-title" className="join-title">
               회원가입
             </h1>
+            <p className="req-note">
+              <RequiredMark /> 표시는 꼭 입력해 주세요.
+            </p>
             <Field
               id="j-name"
               label="이름"
@@ -139,6 +169,16 @@ function Join() {
               value={join.password}
               error={joinErrors.password}
               onChange={(v) => changeJoin('password', v)}
+              hint={`${PASSWORD_MIN}자 이상으로 입력해 주세요.`}
+            />
+            <Field
+              id="j-password-confirm"
+              label="비밀번호 확인"
+              type="password"
+              autoComplete="new-password"
+              value={join.passwordConfirm}
+              error={joinErrors.passwordConfirm}
+              onChange={(v) => changeJoin('passwordConfirm', v)}
             />
             <div className="join-agree">
               <label htmlFor="j-agree" className="join-check">
@@ -147,6 +187,7 @@ function Join() {
                   type="checkbox"
                   checked={join.agree}
                   onChange={(e) => changeJoin('agree', e.target.checked)}
+                  aria-required="true"
                   aria-invalid={Boolean(joinErrors.agree)}
                 />
                 <span>
@@ -158,7 +199,6 @@ function Join() {
             <button type="submit" id="P02-B01" className="btn btn-primary btn-block join-submit">
               가입하기
             </button>
-            <p className="join-note">가입 후 가려던 페이지로 돌아가요.</p>
           </form>
         </section>
 
@@ -199,6 +239,13 @@ function Join() {
               로그인
             </button>
           </form>
+          {/* 비회원 주문 조회 (답변 2026-11-16) */}
+          <p className="join-lookup">
+            회원이 아니신가요?{' '}
+            <Link to="/order-lookup" className="text-link">
+              비회원 주문 조회
+            </Link>
+          </p>
         </section>
       </main>
     </div>

@@ -1,12 +1,60 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { logOut } from '../lib/storage.js'
 import { useMember } from '../lib/useMember.js'
+import { cartCount, useCart } from '../lib/useCart.js'
 import './Header.css'
+
+// 장바구니 아이콘 + 담은 개수 (PC·모바일 공통, 답변 2026-11-16)
+function CartLink({ count, className }) {
+  return (
+    <NavLink
+      to="/cart"
+      className={className}
+      aria-label={count > 0 ? `장바구니 ${count}개` : '장바구니'}
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path
+          d="M5 8h14l-1.2 10.6a1.6 1.6 0 0 1-1.6 1.4H7.8a1.6 1.6 0 0 1-1.6-1.4L5 8Z"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M9 10.5V7a3 3 0 0 1 6 0v3.5"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+      </svg>
+      {count > 0 && (
+        <span className="header-cart-count" aria-hidden="true">
+          {count > 99 ? '99+' : count}
+        </span>
+      )}
+    </NavLink>
+  )
+}
 
 // 공통 메뉴 M-01 ~ M-04
 function Header() {
   const member = useMember()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const count = cartCount(useCart())
+
+  // 모바일(화면 폭 768px 이하) 줄 세 개 메뉴 — 연 페이지 주소를 기억해서, 페이지를 옮기면 저절로 닫힘 (답변 2026-11-16)
+  const [menuOpenAt, setMenuOpenAt] = useState(null)
+  const menuOpen = menuOpenAt === pathname
+
+  useEffect(() => {
+    if (!menuOpen) return undefined
+    const onKey = (e) => {
+      if (e.key === 'Escape') setMenuOpenAt(null)
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [menuOpen])
 
   function handleLogOut() {
     logOut()
@@ -18,12 +66,13 @@ function Header() {
       <nav className="header-nav container" aria-label="주 메뉴">
         <Link to="/" id="M-01" className="header-logo" aria-label="그린이슈 홈">
           <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
-            <circle cx="13" cy="13" r="12" stroke="currentColor" strokeWidth="1.4" />
-            <path d="M13 21V10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            {/* 파비콘과 같은 모양 — 초록 원 + 흰 잎 (답변 2026-11-16) */}
+            <circle cx="13" cy="13" r="13" fill="#5B7A3C" />
+            <path d="M13 20.5V10.5" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" />
             <path
-              d="M13 13c0-3.6 2.6-6 6-6 0 3.6-2.6 6-6 6Z"
-              stroke="currentColor"
-              strokeWidth="1.4"
+              d="M13 13.5c0-3.6 2.6-6 6-6 0 3.6-2.6 6-6 6Z"
+              stroke="#FFFFFF"
+              strokeWidth="2"
               strokeLinejoin="round"
             />
           </svg>
@@ -36,6 +85,7 @@ function Header() {
           <NavLink to="/subscribe" id="M-03" className="menu-link">
             정기배송 신청
           </NavLink>
+          <CartLink count={count} className="header-cart" />
           {/* 로그인 상태면 로그아웃 (답변 2026-11-13) */}
           {member ? (
             <button
@@ -52,7 +102,85 @@ function Header() {
             </NavLink>
           )}
         </div>
+
+        {/* 모바일 전용 아이콘 (화면 폭 768px 이하에서만 보임, 답변 2026-11-16) */}
+        <div className="header-mobile">
+          <CartLink count={count} className="header-icon header-cart" />
+          {member ? (
+            <button
+              type="button"
+              className="header-icon"
+              aria-label="로그아웃"
+              onClick={handleLogOut}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M14 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H14"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
+                <path
+                  d="M10 12h10M16.5 8.5 20 12l-3.5 3.5"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          ) : (
+            <Link to="/join" className="header-icon" aria-label="가입 · 로그인">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="8.5" r="3.8" stroke="currentColor" strokeWidth="1.6" />
+                <path
+                  d="M4.5 20c.9-3.6 3.9-5.8 7.5-5.8s6.6 2.2 7.5 5.8"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </Link>
+          )}
+          <button
+            type="button"
+            className="header-icon"
+            aria-label={menuOpen ? '메뉴 닫기' : '메뉴 열기'}
+            aria-expanded={menuOpen}
+            aria-controls="header-drawer"
+            onClick={() => setMenuOpenAt(menuOpen ? null : pathname)}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M4 7h16M4 12h16M4 17h16"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        </div>
       </nav>
+
+      {/* 모바일 메뉴 — 상단 아래로 펼침, 항목을 누르거나 아이콘을 다시 누르면 닫힘 */}
+      {menuOpen && (
+        <div id="header-drawer" className="header-drawer">
+          <NavLink
+            to="/routine"
+            className="header-drawer-link"
+            onClick={() => setMenuOpenAt(null)}
+          >
+            루틴 만들기
+          </NavLink>
+          <NavLink
+            to="/subscribe"
+            className="header-drawer-link"
+            onClick={() => setMenuOpenAt(null)}
+          >
+            정기배송 신청
+          </NavLink>
+        </div>
+      )}
     </header>
   )
 }

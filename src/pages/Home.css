@@ -78,6 +78,25 @@
   gap: 56px 32px;
 }
 
+.products-more {
+  margin-top: 72px;
+  display: flex;
+  justify-content: center;
+}
+
+/* 카드 전체가 상품 상세 링크 — 글자색·밑줄은 그대로 */
+.product-card-link {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.product-card-link:hover {
+  color: inherit;
+}
+
 .product-card {
   display: flex;
   flex-direction: column;
@@ -94,6 +113,22 @@
 
 .product-card:hover .product-photo img {
   transform: scale(1.02);
+}
+
+/* 모바일·태블릿(마우스 올리기가 없는 터치 기기)에서는 사진 확대 없음 (답변 2026-11-16) */
+@media (hover: none) {
+  .product-card:hover .product-photo img {
+    transform: none;
+  }
+}
+
+/* 카드 아래 장바구니 담기 (답변 2026-11-16) */
+.product-cart-btn {
+  align-self: flex-start;
+  height: 44px;
+  min-width: 128px;
+  padding: 0 16px;
+  font-size: 14px;
 }
 
 .product-info {

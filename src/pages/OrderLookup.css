@@ -1,0 +1,56 @@
+/* 비회원 주문 조회 (답변 2026-11-16) */
+/* 입력·표(.detail-spec)·태그 스타일은 ProductDetail.css · Subscribe.css를 같이 씀 */
+@import './ProductDetail.css';
+
+/* 제목 · 양식 · 결과를 화면 가운데로 (답변 2026-11-16) */
+.lookup .page-title {
+  text-align: center;
+}
+
+.lookup-form,
+.lookup-result {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.lookup-form {
+  max-width: var(--form-max);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.lookup-note {
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.lookup-result {
+  max-width: 640px;
+  margin-top: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.lookup-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.lookup-no {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.lookup-spec {
+  align-self: stretch;
+}
+
+.lookup-line {
+  display: block;
+}

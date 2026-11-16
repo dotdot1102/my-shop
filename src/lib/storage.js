@@ -1,10 +1,13 @@
-// 서버 없이 localStorage로 회원·루틴·정기배송 신청을 흉내 냄 (PROJECT_CONTEXT.md 8. 기술과 배포)
+// 서버 없이 localStorage로 회원·루틴·정기배송 신청·1회 주문을 흉내 냄 (PROJECT_CONTEXT.md 8. 기술과 배포)
 // 실제 회원 시스템이 아니라 데모용 — 비밀번호는 원문 대신 SHA-256 해시로만 저장
 const KEYS = {
   accounts: 'gi-accounts',
   member: 'gi-member',
   routine: 'gi-routine',
-  subscription: 'gi-subscription',
+  subscriptions: 'gi-subscriptions',
+  orders: 'gi-orders',
+  couponUsed: 'gi-coupon-used',
+  cart: 'gi-cart',
 }
 
 // 로그인·로그아웃을 화면(헤더 등)에 알리는 이벤트
@@ -96,6 +99,132 @@ export function saveRoutine(routine) {
   write(KEYS.routine, routine)
 }
 
-export function saveSubscription(subscription) {
-  write(KEYS.subscription, { ...subscription, at: new Date().toISOString() })
+// ===== 주문 · 정기배송 기록 (답변 2026-11-16) =====
+// - 1회 주문(gi-orders)과 정기배송 신청(gi-subscriptions)을 각각 목록으로 쌓음
+// - 모두 주문번호(GI-날짜-숫자 4자리)가 생김
+// - 비회원은 주문 비밀번호(숫자 4자리)를 해시로만 저장 → 주문번호 + 비밀번호로 조회·취소
+// - 상태: 1회 주문 received(주문 접수) / canceled(취소됨), 정기배송 active(정기배송 중) / ended(해지됨)
+export const ORDER_STATUS = {
+  received: '주문 접수',
+  canceled: '취소됨',
+  active: '정기배송 중',
+  ended: '해지됨',
+}
+
+function allRecords() {
+  return [
+    ...(read(KEYS.orders) ?? []).map((r) => ({ ...r, kind: 'order' })),
+    ...(read(KEYS.subscriptions) ?? []).map((r) => ({ ...r, kind: 'subscription' })),
+  ]
+}
+
+function makeOrderNo() {
+  const now = new Date()
+  const pad = (n) => String(n).padStart(2, '0')
+  const date = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`
+  const used = new Set(allRecords().map((r) => r.no))
+  let no
+  do {
+    no = `GI-${date}-${String(Math.floor(1000 + Math.random() * 9000))}`
+  } while (used.has(no))
+  return no
+}
+
+// 저장하고 주문번호를 돌려줌. password는 비회원일 때만 넘김
+async function saveRecord(key, record, { member, password, status }) {
+  const no = makeOrderNo()
+  const list = read(key) ?? []
+  list.push({
+    ...record,
+    no,
+    status,
+    memberEmail: member?.email ?? null,
+    passwordHash: password ? await hash(`${no}:${password}`) : null,
+    at: new Date().toISOString(),
+  })
+  write(key, list)
+  return no
+}
+
+export function saveSubscription(subscription, options = {}) {
+  return saveRecord(KEYS.subscriptions, subscription, { ...options, status: 'active' })
+}
+
+export function saveOrder(order, options = {}) {
+  return saveRecord(KEYS.orders, order, { ...options, status: 'received' })
+}
+
+function normalizeOrderNo(no) {
+  return no.trim().toUpperCase()
+}
+
+// 비회원 주문 조회 — 맞으면 기록(kind 포함), 아니면 null
+export async function findGuestOrder(no, password) {
+  const key = normalizeOrderNo(no)
+  const record = allRecords().find((r) => r.no === key)
+  if (!record || !record.passwordHash) return null
+  if (record.passwordHash !== (await hash(`${key}:${password}`))) return null
+  return record
+}
+
+// 비회원 주문 취소(1회 주문) · 해지(정기배송) — 바뀐 기록을 돌려줌
+export async function cancelGuestOrder(no, password) {
+  const record = await findGuestOrder(no, password)
+  if (!record) return null
+  const key = record.kind === 'order' ? KEYS.orders : KEYS.subscriptions
+  const nextStatus = record.kind === 'order' ? 'canceled' : 'ended'
+  const list = read(key) ?? []
+  write(
+    key,
+    list.map((r) => (r.no === record.no ? { ...r, status: nextStatus } : r)),
+  )
+  return { ...record, status: nextStatus }
+}
+
+// 가입 혜택 '단품 1회 무료권' — 회원마다 한 번, 1회 주문에서 씀 (답변 2026-11-16)
+export function hasFreeCoupon(member) {
+  if (!member) return false
+  const used = read(KEYS.couponUsed) ?? []
+  return !used.includes(member.email)
+}
+
+export function spendFreeCoupon(member) {
+  if (!member) return
+  const used = read(KEYS.couponUsed) ?? []
+  if (!used.includes(member.email)) write(KEYS.couponUsed, [...used, member.email])
+}
+
+// 장바구니 — 비회원도 사용, 이 브라우저에 저장 (답변 2026-11-16)
+// 형태: [{ id: 상품 id, qty: 수량 }]
+export const CART_EVENT = 'gi-cart-change'
+
+export function loadCart() {
+  const cart = read(KEYS.cart)
+  return Array.isArray(cart) ? cart.filter((line) => line && line.qty > 0) : []
+}
+
+function writeCart(cart) {
+  write(KEYS.cart, cart)
+  window.dispatchEvent(new Event(CART_EVENT))
+}
+
+// 이미 담긴 상품이면 수량을 더함
+export function addToCart(id, qty = 1) {
+  const cart = loadCart()
+  const line = cart.find((l) => l.id === id)
+  writeCart(
+    line ? cart.map((l) => (l.id === id ? { ...l, qty: l.qty + qty } : l)) : [...cart, { id, qty }],
+  )
+}
+
+export function setCartQty(id, qty) {
+  writeCart(loadCart().map((l) => (l.id === id ? { ...l, qty: Math.max(1, qty) } : l)))
+}
+
+export function removeFromCart(id) {
+  writeCart(loadCart().filter((l) => l.id !== id))
+}
+
+export function clearCart() {
+  writeCart([])
 }

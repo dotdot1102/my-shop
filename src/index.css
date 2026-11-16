@@ -259,6 +259,53 @@ a:hover {
   text-align: left;
 }
 
+/* 필수 표시 '*' · 칸 아래 안내 (답변 2026-11-16) */
+.req,
+.field label .req {
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.req-note {
+  font-size: 13px;
+  color: var(--ink-muted);
+  text-align: left;
+}
+
+.field-hint {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ink-muted);
+  text-align: left;
+}
+
+/* 주문 · 신청 동의 체크 (답변 2026-11-16) */
+.agree {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.agree-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  padding-top: 11px;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: left;
+  cursor: pointer;
+}
+
+.agree-check input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--brand);
+}
+
 /* 칩 (선택 버튼) — 루틴 생활 패턴, 결제 방식 */
 .chip {
   min-height: 52px;

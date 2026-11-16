@@ -1,14 +1,11 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import ArrowIcon from '../components/ArrowIcon.jsx'
-import { routinePlan } from '../data/routine.js'
+import { buildRoutine, CHIPS, COUNT_WORDS, TICK_SPOKEN, TICKS } from '../data/routine.js'
 import { loadRoutine, saveRoutine } from '../lib/storage.js'
 import './Routine.css'
 
-// 질문·선택지 (출처: Figma 와이어프레임 P-03)
-const TICKS = ['06:00', '07:00', '08:00', '09:00', '10:00']
-const TICK_SPOKEN = ['오전 6시', '오전 7시', '오전 8시', '오전 9시', '오전 10시']
-const CHIPS = ['주 5일 출근', '주로 재택', '유연한 일정', '등교·통학']
+// 질문·선택지 (출처: Figma 와이어프레임 P-03) — data/routine.js에 있음
 
 // P-03 루틴 만들기
 function Routine() {
@@ -17,6 +14,8 @@ function Routine() {
   const [chip, setChip] = useState(saved?.chip ?? 0)
   // 선택이 바뀔 때마다 결과 영역을 다시 그려 0.2초 페이드
   const [version, setVersion] = useState(0)
+  // 고른 출근 시간·생활 패턴에 맞는 추천 (답변 2026-11-16)
+  const plan = buildRoutine(tick, chip)
 
   function update(next) {
     const routine = { tick, chip, ...next }
@@ -93,15 +92,15 @@ function Routine() {
         {/* P03-S03 결과 영역 */}
         <section id="P03-S03" className="routine-result" aria-labelledby="result-title">
           <p className="result-note">
-            오전 8시 출근 · 주 5일 출근을 선택한 예시예요. 선택을 바꾸면 추천도 달라져요.
+            {TICK_SPOKEN[tick]} 출근 · {CHIPS[chip]}에 맞춘 루틴이에요.
           </p>
           <div key={version} className={version ? 'result-body is-fading' : 'result-body'}>
             <div className="result-list">
               <div className="section-title result-title">
-                <h2 id="result-title">하루에 세 번, 나를 챙기는 시간</h2>
+                <h2 id="result-title">하루에 {COUNT_WORDS[plan.length]} 번, 나를 챙기는 시간</h2>
               </div>
-              {routinePlan.map((item) => (
-                <div key={item.time} className="result-row">
+              {plan.map((item) => (
+                <div key={item.product.id} className="result-row">
                   <p className="result-time">{item.time}</p>
                   <div className="photo result-photo">
                     <img src={item.product.image} alt={item.product.name} />
@@ -115,10 +114,10 @@ function Routine() {
             </div>
             <aside className="result-box" aria-labelledby="box-title">
               <h2 id="box-title" className="result-box-title">
-                일주일 루틴 구성 · 추천 예시
+                일주일 루틴 구성
               </h2>
-              {routinePlan.map((item) => (
-                <div key={item.time} className="result-box-row">
+              {plan.map((item) => (
+                <div key={item.product.id} className="result-box-row">
                   <span>{item.product.name}</span>
                   <span className="qty">
                     {item.weeklyQty}

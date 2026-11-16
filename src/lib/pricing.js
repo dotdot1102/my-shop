@@ -16,3 +16,24 @@ export function calcPrice(lines, tab) {
   }
   return { subtotal, shipping, total: subtotal + shipping }
 }
+
+// 1회 주문 (답변 2026-11-16)
+// - 배송비: 상품 직접 선택과 같은 규칙 (5만 원 이상 무료, 미만 3,000원)
+// - 회원 무료권: 상품 1개 값 + 배송비 무료
+export function calcOrderPrice(unitPrice, qty, coupon = false) {
+  const subtotal = unitPrice * qty
+  const discount = coupon && qty > 0 ? unitPrice : 0
+  let shipping = subtotal > 0 && subtotal < FREE_SHIPPING_MIN ? SHIPPING_FEE : 0
+  if (coupon) shipping = 0
+  return { subtotal, discount, shipping, total: subtotal - discount + shipping }
+}
+
+// 장바구니 주문 (답변 2026-11-16) — 1회 주문과 같은 규칙
+// - freeUnitPrice: 무료권을 쓸 상품의 1개 값 (고르지 않았으면 null). 쓰면 배송비도 무료
+export function calcCartPrice(lines, freeUnitPrice = null) {
+  const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.qty, 0)
+  const discount = freeUnitPrice ?? 0
+  let shipping = subtotal > 0 && subtotal < FREE_SHIPPING_MIN ? SHIPPING_FEE : 0
+  if (freeUnitPrice != null) shipping = 0
+  return { subtotal, discount, shipping, total: subtotal - discount + shipping }
+}

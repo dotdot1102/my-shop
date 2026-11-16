@@ -8,6 +8,11 @@ import Home from './pages/Home.jsx'
 import Join from './pages/Join.jsx'
 import Routine from './pages/Routine.jsx'
 import Subscribe from './pages/Subscribe.jsx'
+import Products from './pages/Products.jsx'
+import ProductDetail from './pages/ProductDetail.jsx'
+import Order from './pages/Order.jsx'
+import Cart from './pages/Cart.jsx'
+import OrderLookup from './pages/OrderLookup.jsx'
 
 function App() {
   const [showIntro, setShowIntro] = useState(shouldShowIntro)
@@ -28,6 +33,14 @@ function App() {
           }
         />
         <Route path="/subscribe" element={<Subscribe />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<ProductDetail />} />
+        <Route path="/order/:id" element={<Order />} />
+        {/* 장바구니 · 장바구니 주문 (답변 2026-11-16) */}
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/order" element={<Order />} />
+        {/* 비회원 주문 조회 (답변 2026-11-16) */}
+        <Route path="/order-lookup" element={<OrderLookup />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
       </Routes>

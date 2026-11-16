@@ -1,0 +1,113 @@
+/* 장바구니 (답변 2026-11-16) */
+/* 수량(.stepper)·합계(.summary-*)·상품 줄(.pick-*) 스타일은 Subscribe.css를 같이 씀 */
+@import './ProductDetail.css';
+
+.cart-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 64px;
+  align-items: flex-start;
+}
+
+.cart-list {
+  flex: 6 1 400px;
+  min-width: 0;
+  border-top: 1px solid var(--line);
+}
+
+.cart-row {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 16px 28px;
+  align-items: center;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.cart-photo {
+  display: block;
+}
+
+.cart-name-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cart-name-link:hover {
+  color: var(--brand);
+}
+
+/* 수량 · 금액 · 삭제 — 사진 오른쪽 아래 줄 */
+.cart-controls {
+  grid-column: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+.cart-line-price {
+  margin-left: auto;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cart-remove {
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.cart-remove:hover {
+  color: var(--ink);
+}
+
+/* 결제 예상 금액 아래 안내 — 한 줄에 하나씩 */
+.cart-note {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.cart-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  font-size: 16px;
+  color: var(--ink-muted);
+}
+
+/* 장바구니 주문 — 담은 상품 여러 줄 */
+.order-list {
+  margin-bottom: 80px;
+}
+
+.order-list .order-item {
+  margin-bottom: 0;
+}
+
+.order-list .order-item + .order-item {
+  border-top: 0;
+}
+
+.order-list .detail-back {
+  margin: 16px 0 0;
+}
+
+.order-free-pick {
+  margin-top: 0;
+}
+
+.order-qty {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}

@@ -82,6 +82,19 @@
   gap: 20px;
 }
 
+/* 비회원 주문 조회 링크 (답변 2026-11-16) */
+.join-lookup {
+  margin-top: 32px;
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.join-lookup a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
 .login-title {
   margin-bottom: 8px;
   font-size: 16px;

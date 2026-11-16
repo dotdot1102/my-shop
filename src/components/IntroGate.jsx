@@ -12,6 +12,11 @@ import './IntroGate.css'
 // - 안내 문구 없음, 작은 '건너뛰기' 버튼
 const LEAVE_MS = 400
 
+// 모바일(마우스 올리기가 없는 기기)에서는 폴더 기울기·사진 엿보기를 끔 (답변 2026-11-16)
+function isTouchOnly() {
+  return typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches
+}
+
 const ITEMS = [
   { image: introIngredients, alt: '사과, 레몬, 케일, 당근, 비트를 쌓아 올린 재료' },
   { image: introCarrotChips, alt: '그린이슈 당근칩 봉투' },
@@ -21,6 +26,7 @@ const ITEMS = [
 function IntroGate({ onDone }) {
   const [leaving, setLeaving] = useState(false)
   const leavingRef = useRef(false)
+  const [touchOnly] = useState(isTouchOnly)
 
   // 첫 화면이 떠 있는 동안 뒤 페이지 스크롤 막기
   useEffect(() => {
@@ -57,6 +63,8 @@ function IntroGate({ onDone }) {
           draggable={false}
           zoomOnClick={false}
           closeOnOutsideClick={false}
+          tilt={touchOnly ? 0 : undefined}
+          peek={!touchOnly}
           onItemClick={enter}
         />
       </div>

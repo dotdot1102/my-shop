@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import ArrowIcon from '../components/ArrowIcon.jsx'
-import { products } from '../data/products.js'
+import { homeProducts } from '../data/products.js'
+import ProductCard from '../components/ProductCard.jsx'
 import HeroSlider from '../components/HeroSlider.jsx'
 import brandImage from '../assets/images/P01-S04.brand.jpg'
 import './Home.css'
@@ -45,28 +46,15 @@ function Home() {
             <h2 id="products-title">계절이 키운 재료 그대로</h2>
           </div>
           <div className="product-grid">
-            {products.map((p) => (
-              <article key={p.id} className="product-card">
-                <div className="photo product-photo">
-                  <img src={p.image} alt={`${p.name}와 재료`} />
-                </div>
-                <div className="product-info">
-                  <h3 className="product-name">{p.name}</h3>
-                  <p className="product-ingredients">{p.ingredients}</p>
-                  <p className="product-price-row">
-                    <span className="product-price">
-                      {p.volume} · {p.price}
-                    </span>
-                    <span className="tag">예시 가격</span>
-                  </p>
-                  {p.howTo ? (
-                    <p className="product-howto">{p.howTo}</p>
-                  ) : (
-                    <p className="tbd product-tbd">언제 · 어떻게 먹을지 — 추후 결정</p>
-                  )}
-                </div>
-              </article>
+            {homeProducts.map((p) => (
+              <ProductCard key={p.id} product={p} />
             ))}
+          </div>
+          {/* 상품 더보기 — 6개 전체 페이지로 (답변 2026-11-16) */}
+          <div className="products-more">
+            <Link to="/products" id="P01-B05" className="btn btn-secondary">
+              상품 더보기
+            </Link>
           </div>
         </section>
       </div>

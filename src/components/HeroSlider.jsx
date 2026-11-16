@@ -7,8 +7,8 @@ import './HeroSlider.css'
 
 // P01-S01 첫 화면 이미지 슬라이드 (답변 2026-11-13)
 // - 3장면, 0.4초 크로스페이드
-// - 2초마다 자동으로 다음 장면 (마우스를 올리거나 키보드 포커스가 있으면 멈춤,
-//   '동작 줄이기' 설정이면 자동 전환 없음)
+// - 2초마다 자동으로 다음 장면 (화살표·막대에 마우스를 올리거나 키보드 포커스가 있으면 멈춤 —
+//   사진 위에서는 멈추지 않음 (답변 2026-11-16), '동작 줄이기' 설정이면 자동 전환 없음)
 // - 세로 사진 두 장은 한 장면에 나란히
 // - 사진 위에는 글을 올리지 않고, 화살표·막대는 이미지 아래 바깥에 둠
 const SLIDES = [
@@ -61,12 +61,6 @@ function HeroSlider() {
       role="region"
       aria-roledescription="carousel"
       aria-label="첫 화면 이미지"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget)) setPaused(false)
-      }}
     >
       <div className="hero-slides">
         {SLIDES.map((images, i) => (
@@ -85,7 +79,15 @@ function HeroSlider() {
         ))}
       </div>
 
-      <div className="hero-controls">
+      <div
+        className="hero-controls"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onFocus={() => setPaused(true)}
+        onBlur={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget)) setPaused(false)
+        }}
+      >
         <button type="button" className="hero-arrow" aria-label="이전 이미지" onClick={() => step(-1)}>
           <Chevron direction="prev" />
         </button>

@@ -1,0 +1,144 @@
+/* 상품 상세 · 1회 주문 (답변 2026-11-16) */
+/* 수량(.stepper)·합계(.summary-*)·양식(.apply-*) 스타일은 Subscribe.css를 같이 씀 */
+@import './Subscribe.css';
+
+.detail {
+  padding-top: 64px;
+  padding-bottom: 180px;
+}
+
+.detail-back {
+  margin-bottom: 40px;
+  font-size: 16px;
+}
+
+/* 상품 목록 링크 — 누르는 영역 44px (답변 2026-11-16) */
+.detail-back a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.detail-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 80px;
+  align-items: flex-start;
+}
+
+.detail-photo {
+  flex: 5 1 360px;
+  min-width: 0;
+  aspect-ratio: 4 / 5;
+}
+
+.detail-info {
+  flex: 6 1 400px;
+  min-width: 0;
+  max-width: var(--form-max);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.detail-head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-sub {
+  font-size: 15px;
+  color: var(--ink-muted);
+}
+
+.detail-desc {
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+/* 판매가 · 배송 방법 · 배송비 · 추천 */
+.detail-spec {
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+
+.detail-spec > div {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 15px;
+}
+
+.detail-spec dt {
+  color: var(--ink-muted);
+}
+
+.detail-spec dd {
+  margin: 0;
+}
+
+.detail-price {
+  font-weight: 600;
+}
+
+.detail-qty {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.detail-qty-label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.stepper button:disabled {
+  color: var(--ink-muted);
+  cursor: default;
+}
+
+.detail-total {
+  padding: 8px 0 0;
+}
+
+/* 1회 주문 — 주문 상품 한 줄 */
+.order-item {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: center;
+  padding: 24px 0;
+  margin-bottom: 80px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+/* 장바구니 담기 · 주문하기 나란히 반반 (답변 2026-11-16) */
+.detail-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.detail-actions .btn {
+  height: 56px;
+  padding: 0 16px;
+}
+
+.detail-added {
+  min-height: 24px;
+  margin-top: -16px;
+  font-size: 14px;
+}
+
+.order-coupon {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 15px;
+}

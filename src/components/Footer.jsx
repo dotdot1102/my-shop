@@ -24,7 +24,7 @@ function Footer() {
               </li>
             </ul>
           </div>
-          <p className="footer-note">상품 가격은 시세를 참고한 예시입니다.</p>
+          <p className="footer-note">이 페이지는 수업용 가상페이지 입니다.</p>
         </div>
       </div>
     </footer>
