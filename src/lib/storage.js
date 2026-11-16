@@ -167,10 +167,8 @@ export async function findGuestOrder(no, password) {
   return record
 }
 
-// 비회원 주문 취소(1회 주문) · 해지(정기배송) — 바뀐 기록을 돌려줌
-export async function cancelGuestOrder(no, password) {
-  const record = await findGuestOrder(no, password)
-  if (!record) return null
+// 1회 주문은 취소됨, 정기배송은 해지됨으로 바꾸고 바뀐 기록을 돌려줌
+function closeRecord(record) {
   const key = record.kind === 'order' ? KEYS.orders : KEYS.subscriptions
   const nextStatus = record.kind === 'order' ? 'canceled' : 'ended'
   const list = read(key) ?? []
@@ -179,6 +177,32 @@ export async function cancelGuestOrder(no, password) {
     list.map((r) => (r.no === record.no ? { ...r, status: nextStatus } : r)),
   )
   return { ...record, status: nextStatus }
+}
+
+// 비회원 주문 취소(1회 주문) · 해지(정기배송) — 바뀐 기록을 돌려줌
+export async function cancelGuestOrder(no, password) {
+  const record = await findGuestOrder(no, password)
+  if (!record) return null
+  return closeRecord(record)
+}
+
+// 마이페이지 — 회원의 1회 주문 · 정기배송 신청 (최근 순) (답변 2026-11-16)
+export function listMemberRecords(member) {
+  if (!member) return { orders: [], subscriptions: [] }
+  const mine = allRecords()
+    .filter((r) => r.no && r.memberEmail === member.email)
+    .sort((a, b) => (a.at < b.at ? 1 : -1))
+  return {
+    orders: mine.filter((r) => r.kind === 'order'),
+    subscriptions: mine.filter((r) => r.kind === 'subscription'),
+  }
+}
+
+// 마이페이지에서 주문 취소 · 정기배송 해지 — 그 회원의 기록만
+export function cancelMemberRecord(member, no) {
+  const record = allRecords().find((r) => r.no === no && r.memberEmail === member?.email)
+  if (!record || (record.status !== 'received' && record.status !== 'active')) return null
+  return closeRecord(record)
 }
 
 // 가입 혜택 '단품 1회 무료권' — 회원마다 한 번, 1회 주문에서 씀 (답변 2026-11-16)

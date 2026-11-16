@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { logOut } from '../lib/storage.js'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useMember } from '../lib/useMember.js'
 import { cartCount, useCart } from '../lib/useCart.js'
 import './Header.css'
@@ -39,7 +38,6 @@ function CartLink({ count, className }) {
 // 공통 메뉴 M-01 ~ M-04
 function Header() {
   const member = useMember()
-  const navigate = useNavigate()
   const { pathname } = useLocation()
   const count = cartCount(useCart())
 
@@ -55,11 +53,6 @@ function Header() {
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [menuOpen])
-
-  function handleLogOut() {
-    logOut()
-    navigate('/')
-  }
 
   return (
     <header className="header">
@@ -86,16 +79,11 @@ function Header() {
             정기배송 신청
           </NavLink>
           <CartLink count={count} className="header-cart" />
-          {/* 로그인 상태면 로그아웃 (답변 2026-11-13) */}
+          {/* 로그인 상태면 마이페이지 — 로그아웃은 마이페이지 안에 (답변 2026-11-16) */}
           {member ? (
-            <button
-              type="button"
-              id="M-04"
-              className="btn btn-secondary header-btn"
-              onClick={handleLogOut}
-            >
-              로그아웃
-            </button>
+            <NavLink to="/mypage" id="M-04" className="btn btn-secondary header-btn">
+              마이페이지
+            </NavLink>
           ) : (
             <NavLink to="/join" id="M-04" className="btn btn-secondary header-btn">
               가입 · 로그인
@@ -106,42 +94,22 @@ function Header() {
         {/* 모바일 전용 아이콘 (화면 폭 768px 이하에서만 보임, 답변 2026-11-16) */}
         <div className="header-mobile">
           <CartLink count={count} className="header-icon header-cart" />
-          {member ? (
-            <button
-              type="button"
-              className="header-icon"
-              aria-label="로그아웃"
-              onClick={handleLogOut}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                  d="M14 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H14"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M10 12h10M16.5 8.5 20 12l-3.5 3.5"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          ) : (
-            <Link to="/join" className="header-icon" aria-label="가입 · 로그인">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="12" cy="8.5" r="3.8" stroke="currentColor" strokeWidth="1.6" />
-                <path
-                  d="M4.5 20c.9-3.6 3.9-5.8 7.5-5.8s6.6 2.2 7.5 5.8"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </Link>
-          )}
+          {/* 사람 아이콘 — 회원은 마이페이지, 비회원은 가입·로그인 (답변 2026-11-16) */}
+          <NavLink
+            to={member ? '/mypage' : '/join'}
+            className="header-icon header-person"
+            aria-label={member ? '마이페이지' : '가입 · 로그인'}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="8.5" r="3.8" stroke="currentColor" strokeWidth="1.6" />
+              <path
+                d="M4.5 20c.9-3.6 3.9-5.8 7.5-5.8s6.6 2.2 7.5 5.8"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+              />
+            </svg>
+          </NavLink>
           <button
             type="button"
             className="header-icon"

@@ -62,3 +62,46 @@
   font-size: 13px;
   color: var(--ink-muted);
 }
+
+/* 약관 · 사업자 정보 · 저작권 — 작은 회색 글씨 (답변 2026-11-16) */
+.footer-info {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink-muted);
+}
+
+.footer-policy,
+.footer-business {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-policy {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.footer-business-label {
+  font-weight: 500;
+}
+
+.footer-business-label::after {
+  content: ' :';
+}
+
+/* 휴대폰: 사업자 정보 항목마다 한 줄 */
+@media (max-width: 768px) {
+  .footer-business {
+    flex-direction: column;
+    gap: 2px;
+  }
+}

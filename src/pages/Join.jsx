@@ -74,7 +74,9 @@ function Join() {
   const location = useLocation()
 
   // P-03에서 왔으면 P-03으로, 아니면 P-01로 돌아감
-  const returnTo = location.state?.from === '/routine' ? '/routine' : '/'
+  // 마이페이지에서 왔으면 마이페이지로 (답변 2026-11-16)
+  const RETURN_PAGES = ['/routine', '/mypage']
+  const returnTo = RETURN_PAGES.includes(location.state?.from) ? location.state.from : '/'
 
   const [join, setJoin] = useState({
     name: '',

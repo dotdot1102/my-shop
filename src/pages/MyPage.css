@@ -1,0 +1,139 @@
+/* 마이페이지 (답변 2026-11-16) */
+/* 정보 표(.detail-spec)·태그 스타일은 ProductDetail.css · Subscribe.css를 같이 씀 */
+@import './ProductDetail.css';
+
+.mypage {
+  max-width: 720px;
+  padding-top: 120px;
+  padding-bottom: 180px;
+}
+
+.mypage .page-title {
+  margin-bottom: 56px;
+}
+
+.my-section {
+  padding: 40px 0;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.my-section > .detail-spec {
+  align-self: stretch;
+}
+
+.my-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.my-logout {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 14px;
+}
+
+.my-benefit {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.my-benefit-note {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.my-empty {
+  font-size: 15px;
+  color: var(--ink-muted);
+}
+
+/* 주문 · 정기배송 목록 */
+.my-records {
+  align-self: stretch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.my-record {
+  padding: 20px 24px;
+  border: 1px solid var(--line);
+  background: var(--surface-white);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.my-record-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.my-record-no {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.my-record-date {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.my-record-items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.my-record-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 15px;
+}
+
+.my-record-btn {
+  height: 44px;
+  padding: 0 18px;
+  font-size: 14px;
+}
+
+/* 내 루틴 */
+.my-routine {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 15px;
+}
+
+.my-routine-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  line-height: 1.9;
+}
+
+.my-routine-time {
+  display: inline-block;
+  min-width: 56px;
+  font-weight: 600;
+}

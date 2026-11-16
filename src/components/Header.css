@@ -147,7 +147,8 @@
     margin: 0;
   }
 
-  .header-icon.header-cart.active {
+  .header-icon.header-cart.active,
+  .header-icon.header-person.active {
     color: var(--brand);
   }
 

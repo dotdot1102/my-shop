@@ -13,6 +13,7 @@ import ProductDetail from './pages/ProductDetail.jsx'
 import Order from './pages/Order.jsx'
 import Cart from './pages/Cart.jsx'
 import OrderLookup from './pages/OrderLookup.jsx'
+import MyPage from './pages/MyPage.jsx'
 
 function App() {
   const [showIntro, setShowIntro] = useState(shouldShowIntro)
@@ -41,6 +42,15 @@ function App() {
         <Route path="/order" element={<Order />} />
         {/* 비회원 주문 조회 (답변 2026-11-16) */}
         <Route path="/order-lookup" element={<OrderLookup />} />
+        {/* 마이페이지 — 회원만 (답변 2026-11-16) */}
+        <Route
+          path="/mypage"
+          element={
+            <RequireMember>
+              <MyPage />
+            </RequireMember>
+          }
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
       </Routes>
