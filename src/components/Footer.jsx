@@ -24,7 +24,7 @@ function Footer() {
         <div className="footer-row">
           <div className="footer-sns">
             <p className="footer-label">SNS</p>
-            {/* 인스타그램 로고만 (링크 주소는 미정 — 정해지면 <a>로 감쌈) */}
+            {/* 인스타그램 로고만, 링크 없음 (확정, 답변 2026-11-17) */}
             <ul className="footer-sns-list">
               <li>
                 <span className="footer-sns-icon" role="img" aria-label="Instagram">

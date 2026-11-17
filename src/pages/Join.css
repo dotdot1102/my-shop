@@ -100,3 +100,22 @@
   font-size: 16px;
   font-weight: 500;
 }
+
+/* 비밀번호 찾기 (답변 2026-11-17) — 버튼이지만 텍스트 링크 모양, 터치 영역 44px */
+.join-find {
+  font-size: 14px;
+}
+
+.join-link-btn {
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.join-notice {
+  font-size: 14px;
+  color: var(--brand);
+}

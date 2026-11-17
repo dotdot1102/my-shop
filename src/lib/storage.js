@@ -91,6 +91,77 @@ export function logOut() {
   setMember(null)
 }
 
+// ===== 비밀번호 찾기 · 회원 정보 수정 · 탈퇴 (답변 2026-11-17) =====
+function findAccount(accounts, name, email) {
+  const key = normalizeEmail(email)
+  return accounts.find((a) => a.email === key && a.name === name.trim())
+}
+
+// 비밀번호 찾기 1단계: 가입한 이름 + 이메일이 맞는지
+export function checkAccountForReset({ name, email }) {
+  return Boolean(findAccount(read(KEYS.accounts) ?? [], name, email))
+}
+
+// 비밀번호 찾기 2단계: 새 비밀번호로 바꿈 (이름 + 이메일을 다시 확인)
+export async function resetPassword({ name, email, password }) {
+  const accounts = read(KEYS.accounts) ?? []
+  const account = findAccount(accounts, name, email)
+  if (!account) return { ok: false }
+  account.passwordHash = await hash(password)
+  write(KEYS.accounts, accounts)
+  return { ok: true }
+}
+
+// 회원 정보 수정: 이름 · 이메일 · 비밀번호(비우면 그대로)
+// 이메일을 바꾸면 주문 · 정기배송 · 무료권 사용 기록도 새 이메일로 옮김
+export async function updateProfile(member, { name, email, password }) {
+  const accounts = read(KEYS.accounts) ?? []
+  const account = accounts.find((a) => a.email === member?.email)
+  if (!account) return { ok: false, reason: 'missing' }
+  const nextEmail = normalizeEmail(email)
+  if (nextEmail !== account.email && accounts.some((a) => a.email === nextEmail)) {
+    return { ok: false, reason: 'exists' }
+  }
+  const prevEmail = account.email
+  account.name = name.trim()
+  account.email = nextEmail
+  if (password) account.passwordHash = await hash(password)
+  write(KEYS.accounts, accounts)
+  if (nextEmail !== prevEmail) {
+    for (const key of [KEYS.orders, KEYS.subscriptions]) {
+      const list = read(key) ?? []
+      write(
+        key,
+        list.map((r) => (r.memberEmail === prevEmail ? { ...r, memberEmail: nextEmail } : r)),
+      )
+    }
+    const used = read(KEYS.couponUsed) ?? []
+    if (used.includes(prevEmail)) {
+      write(KEYS.couponUsed, used.map((e) => (e === prevEmail ? nextEmail : e)))
+    }
+  }
+  setMember({ name: account.name, email: account.email })
+  return { ok: true }
+}
+
+// 회원 탈퇴: 진행 중인 정기배송을 모두 해지됨으로 바꾸고 계정 삭제 후 로그아웃
+export function withdraw(member) {
+  if (!member) return
+  const subs = read(KEYS.subscriptions) ?? []
+  write(
+    KEYS.subscriptions,
+    subs.map((r) =>
+      r.memberEmail === member.email && r.status === 'active' ? { ...r, status: 'ended' } : r,
+    ),
+  )
+  const accounts = read(KEYS.accounts) ?? []
+  write(
+    KEYS.accounts,
+    accounts.filter((a) => a.email !== member.email),
+  )
+  setMember(null)
+}
+
 export function loadRoutine() {
   return read(KEYS.routine)
 }
@@ -203,6 +274,35 @@ export function cancelMemberRecord(member, no) {
   const record = allRecords().find((r) => r.no === no && r.memberEmail === member?.email)
   if (!record || (record.status !== 'received' && record.status !== 'active')) return null
   return closeRecord(record)
+}
+
+// ===== 정기배송 구성 변경 (답변 2026-11-17) =====
+// - 정기배송 중(active)인 신청만, 상품 · 수량 · 배송 요일을 바꿈
+// - 신청 방식(tab)은 그대로 — 루틴 구성으로 시작했으면 루틴 혜택(배송비 매회 무료) 유지
+// changes: { items, price, deliveryDay, firstDelivery }
+function updateSubscriptionRecord(record, changes) {
+  if (record.kind !== 'subscription' || record.status !== 'active') return null
+  const list = read(KEYS.subscriptions) ?? []
+  const updated = { ...record, ...changes, changedAt: new Date().toISOString() }
+  write(
+    KEYS.subscriptions,
+    list.map((r) => (r.no === record.no ? { ...r, ...changes, changedAt: updated.changedAt } : r)),
+  )
+  return updated
+}
+
+// 마이페이지 — 그 회원의 정기배송만
+export function updateMemberSubscription(member, no, changes) {
+  const record = allRecords().find((r) => r.no === no && r.memberEmail === member?.email)
+  if (!record) return null
+  return updateSubscriptionRecord(record, changes)
+}
+
+// 비회원 주문 조회 — 주문번호 + 주문 비밀번호가 맞을 때만
+export async function updateGuestSubscription(no, password, changes) {
+  const record = await findGuestOrder(no, password)
+  if (!record) return null
+  return updateSubscriptionRecord(record, changes)
 }
 
 // 가입 혜택 '단품 1회 무료권' — 회원마다 한 번, 1회 주문에서 씀 (답변 2026-11-16)

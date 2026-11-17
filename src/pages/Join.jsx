@@ -1,29 +1,26 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { logIn, signUp } from '../lib/storage.js'
+import { checkAccountForReset, logIn, resetPassword, signUp } from '../lib/storage.js'
+import {
+  checkEmail,
+  checkName,
+  checkNewPassword,
+  compact,
+  PASSWORD_MIN,
+} from '../lib/accountForm.js'
 import { RequiredMark } from '../components/ContactFields.jsx'
+import Field from '../components/AccountField.jsx'
 import './Join.css'
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const PASSWORD_MIN = 8
-
 // 가입 입력 항목: 이름 · 이메일 · 비밀번호 + 필수 동의 (답변 2026-11-13)
+// 비밀번호 8자 이상 + 확인 칸 (답변 2026-11-16)
 function validateJoin(form) {
-  const errors = {}
-  if (!form.name.trim()) errors.name = '이름을 입력해 주세요.'
-  if (!form.email.trim()) errors.email = '이메일을 입력해 주세요.'
-  else if (!EMAIL_PATTERN.test(form.email.trim())) errors.email = '이메일 형식을 확인해 주세요.'
-  // 비밀번호 8자 이상 + 확인 칸 (답변 2026-11-16)
-  if (!form.password) errors.password = '비밀번호를 입력해 주세요.'
-  else if (form.password.length < PASSWORD_MIN) {
-    errors.password = `비밀번호를 ${PASSWORD_MIN}자 이상으로 입력해 주세요.`
-  }
-  if (!form.passwordConfirm) errors.passwordConfirm = '비밀번호를 한 번 더 입력해 주세요.'
-  else if (form.password && form.passwordConfirm !== form.password) {
-    errors.passwordConfirm = '비밀번호가 서로 달라요.'
-  }
-  if (!form.agree) errors.agree = '필수 동의 항목에 체크해 주세요.'
-  return errors
+  return compact({
+    name: checkName(form.name),
+    email: checkEmail(form.email),
+    ...checkNewPassword(form.password, form.passwordConfirm),
+    agree: form.agree ? undefined : '필수 동의 항목에 체크해 주세요.',
+  })
 }
 
 // 로그인: 이메일 + 비밀번호 (답변 2026-11-13)
@@ -34,39 +31,7 @@ function validateLogin(form) {
   return errors
 }
 
-// 칸 이름 옆 '*' = 필수, hint = 칸 아래 안내 (답변 2026-11-16)
-function Field({ id, label, type = 'text', autoComplete, value, error, onChange, hint }) {
-  const describedBy = [error && `${id}-error`, hint && `${id}-hint`].filter(Boolean).join(' ')
-  return (
-    <div className="field">
-      <label htmlFor={id}>
-        {label}
-        <RequiredMark />
-      </label>
-      <input
-        className={error ? 'input is-error' : 'input'}
-        id={id}
-        type={type}
-        autoComplete={autoComplete}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        aria-required="true"
-        aria-invalid={Boolean(error)}
-        aria-describedby={describedBy || undefined}
-      />
-      {hint && !error && (
-        <p id={`${id}-hint`} className="field-hint">
-          {hint}
-        </p>
-      )}
-      {error && (
-        <p id={`${id}-error`} className="field-error">
-          {error}
-        </p>
-      )}
-    </div>
-  )
-}
+const EMPTY_RESET = { name: '', email: '', password: '', passwordConfirm: '' }
 
 // P-02 회원가입·로그인
 function Join() {
@@ -88,6 +53,13 @@ function Join() {
   const [joinErrors, setJoinErrors] = useState({})
   const [login, setLogin] = useState({ email: '', password: '' })
   const [loginErrors, setLoginErrors] = useState({})
+  const [loginNotice, setLoginNotice] = useState('')
+
+  // 비밀번호 찾기 (답변 2026-11-17) — 로그인 자리에서 바뀜
+  // step: null(로그인) → 'check'(이름·이메일 확인) → 'set'(새 비밀번호)
+  const [resetStep, setResetStep] = useState(null)
+  const [reset, setReset] = useState(EMPTY_RESET)
+  const [resetErrors, setResetErrors] = useState({})
 
   function changeJoin(key, value) {
     setJoin((f) => ({ ...f, [key]: value }))
@@ -97,6 +69,23 @@ function Join() {
   function changeLogin(key, value) {
     setLogin((f) => ({ ...f, [key]: value }))
     setLoginErrors((e) => ({ ...e, [key]: undefined, form: undefined }))
+  }
+
+  function changeReset(key, value) {
+    setReset((f) => ({ ...f, [key]: value }))
+    setResetErrors((e) => ({ ...e, [key]: undefined, form: undefined }))
+  }
+
+  function openReset() {
+    setReset({ ...EMPTY_RESET, email: login.email })
+    setResetErrors({})
+    setLoginNotice('')
+    setResetStep('check')
+  }
+
+  function closeReset() {
+    setResetStep(null)
+    setResetErrors({})
   }
 
   async function handleJoin(event) {
@@ -123,6 +112,35 @@ function Join() {
       return
     }
     navigate(returnTo, { replace: true })
+  }
+
+  function handleResetCheck(event) {
+    event.preventDefault()
+    const errors = compact({ name: checkName(reset.name), email: checkEmail(reset.email) })
+    setResetErrors(errors)
+    if (Object.keys(errors).length > 0) return
+    if (!checkAccountForReset(reset)) {
+      setResetErrors({ form: '이름 또는 이메일이 가입 정보와 맞지 않아요.' })
+      return
+    }
+    setResetStep('set')
+  }
+
+  async function handleResetSave(event) {
+    event.preventDefault()
+    const errors = checkNewPassword(reset.password, reset.passwordConfirm)
+    setResetErrors(errors)
+    if (Object.keys(errors).length > 0) return
+    const result = await resetPassword(reset)
+    if (!result.ok) {
+      setResetErrors({ form: '이름 또는 이메일이 가입 정보와 맞지 않아요.' })
+      setResetStep('check')
+      return
+    }
+    setLogin({ email: reset.email.trim(), password: '' })
+    setLoginErrors({})
+    setLoginNotice('비밀번호를 바꿨어요. 새 비밀번호로 로그인해 주세요.')
+    closeReset()
   }
 
   return (
@@ -204,43 +222,136 @@ function Join() {
           </form>
         </section>
 
-        {/* P02-S03 로그인 */}
+        {/* P02-S03 로그인 — '비밀번호 찾기'를 누르면 같은 자리가 찾기 양식으로 바뀜 */}
         <section id="P02-S03" className="join-login" aria-labelledby="login-title">
-          <form className="join-form login-form" onSubmit={handleLogin} noValidate>
-            <p id="login-title" className="login-title">
-              이미 회원이신가요? 로그인
-            </p>
-            <Field
-              id="l-email"
-              label="이메일"
-              type="email"
-              autoComplete="email"
-              value={login.email}
-              error={loginErrors.email}
-              onChange={(v) => changeLogin('email', v)}
-            />
-            <Field
-              id="l-password"
-              label="비밀번호"
-              type="password"
-              autoComplete="current-password"
-              value={login.password}
-              error={loginErrors.password}
-              onChange={(v) => changeLogin('password', v)}
-            />
-            {loginErrors.form && (
-              <p className="field-error" role="alert">
-                {loginErrors.form}
+          {resetStep === null && (
+            <form className="join-form login-form" onSubmit={handleLogin} noValidate>
+              <p id="login-title" className="login-title">
+                이미 회원이신가요? 로그인
               </p>
-            )}
-            <button
-              type="submit"
-              id="P02-B02"
-              className="btn btn-secondary btn-block join-submit"
-            >
-              로그인
-            </button>
-          </form>
+              {loginNotice && (
+                <p className="join-notice" role="status">
+                  {loginNotice}
+                </p>
+              )}
+              <Field
+                id="l-email"
+                label="이메일"
+                type="email"
+                autoComplete="email"
+                value={login.email}
+                error={loginErrors.email}
+                onChange={(v) => changeLogin('email', v)}
+              />
+              <Field
+                id="l-password"
+                label="비밀번호"
+                type="password"
+                autoComplete="current-password"
+                value={login.password}
+                error={loginErrors.password}
+                onChange={(v) => changeLogin('password', v)}
+              />
+              {loginErrors.form && (
+                <p className="field-error" role="alert">
+                  {loginErrors.form}
+                </p>
+              )}
+              <button
+                type="submit"
+                id="P02-B02"
+                className="btn btn-secondary btn-block join-submit"
+              >
+                로그인
+              </button>
+              <p className="join-find">
+                <button type="button" className="text-link join-link-btn" onClick={openReset}>
+                  비밀번호 찾기
+                </button>
+              </p>
+            </form>
+          )}
+
+          {resetStep === 'check' && (
+            <form className="join-form login-form" onSubmit={handleResetCheck} noValidate>
+              <p id="login-title" className="login-title">
+                비밀번호 찾기
+              </p>
+              <p className="join-note">가입할 때 쓴 이름과 이메일을 입력해 주세요.</p>
+              <Field
+                id="r-name"
+                label="이름"
+                autoComplete="name"
+                value={reset.name}
+                error={resetErrors.name}
+                onChange={(v) => changeReset('name', v)}
+              />
+              <Field
+                id="r-email"
+                label="이메일"
+                type="email"
+                autoComplete="email"
+                value={reset.email}
+                error={resetErrors.email}
+                onChange={(v) => changeReset('email', v)}
+              />
+              {resetErrors.form && (
+                <p className="field-error" role="alert">
+                  {resetErrors.form}
+                </p>
+              )}
+              <button type="submit" className="btn btn-secondary btn-block join-submit">
+                확인
+              </button>
+              <p className="join-find">
+                <button type="button" className="text-link join-link-btn" onClick={closeReset}>
+                  로그인으로 돌아가기
+                </button>
+              </p>
+            </form>
+          )}
+
+          {resetStep === 'set' && (
+            <form className="join-form login-form" onSubmit={handleResetSave} noValidate>
+              <p id="login-title" className="login-title">
+                새 비밀번호 정하기
+              </p>
+              <p className="join-note">{reset.email.trim()} 계정의 새 비밀번호를 정해 주세요.</p>
+              <Field
+                id="r-password"
+                label="새 비밀번호"
+                type="password"
+                autoComplete="new-password"
+                value={reset.password}
+                error={resetErrors.password}
+                onChange={(v) => changeReset('password', v)}
+                hint={`${PASSWORD_MIN}자 이상으로 입력해 주세요.`}
+              />
+              <Field
+                id="r-password-confirm"
+                label="새 비밀번호 확인"
+                type="password"
+                autoComplete="new-password"
+                value={reset.passwordConfirm}
+                error={resetErrors.passwordConfirm}
+                onChange={(v) => changeReset('passwordConfirm', v)}
+              />
+              {resetErrors.form && (
+                <p className="field-error" role="alert">
+                  {resetErrors.form}
+                </p>
+              )}
+              <button type="submit" className="btn btn-secondary btn-block join-submit">
+                비밀번호 바꾸기
+              </button>
+              <p className="join-find">
+                <button type="button" className="text-link join-link-btn" onClick={closeReset}>
+                  로그인으로 돌아가기
+                </button>
+              </p>
+            </form>
+          )}
+
           {/* 비회원 주문 조회 (답변 2026-11-16) */}
           <p className="join-lookup">
             회원이 아니신가요?{' '}

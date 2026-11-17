@@ -1,0 +1,11 @@
+/* 배송 요일 칩 5개 — 결제 방식(2칸)과 달리 5칸, 좁은 화면에서도 한 줄 (답변 2026-11-17) */
+.pay-options.day-options {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.day-options .chip {
+  min-height: 48px;
+  padding: 0;
+  text-align: center;
+}

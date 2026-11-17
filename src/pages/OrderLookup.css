@@ -54,3 +54,14 @@
 .lookup-line {
   display: block;
 }
+
+/* 정기배송 구성 변경 · 해지 나란히 (답변 2026-11-17) */
+.lookup-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lookup-result .delivery-line {
+  font-size: inherit;
+}

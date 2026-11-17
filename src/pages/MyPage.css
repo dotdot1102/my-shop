@@ -117,6 +117,17 @@
   font-size: 14px;
 }
 
+/* 구성 변경 · 해지 나란히 (답변 2026-11-17) */
+.my-record-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.delivery-line {
+  font-size: 14px;
+}
+
 /* 내 루틴 */
 .my-routine {
   display: flex;
@@ -136,4 +147,25 @@
   display: inline-block;
   min-width: 56px;
   font-weight: 600;
+}
+
+/* 회원 정보 수정 · 탈퇴 (답변 2026-11-17) */
+.my-profile-btns,
+.my-edit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.my-edit {
+  align-self: stretch;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.my-notice {
+  font-size: 14px;
+  color: var(--brand);
 }

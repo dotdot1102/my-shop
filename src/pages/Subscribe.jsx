@@ -13,6 +13,14 @@ import {
 } from '../lib/contactForm.js'
 import { AgreeCheck, ContactFields, RequiredMark } from '../components/ContactFields.jsx'
 import OrderNoNotice from '../components/OrderNoNotice.jsx'
+import DeliveryDayPicker from '../components/DeliveryDayPicker.jsx'
+import {
+  DEFAULT_DELIVERY_DAY,
+  DELIVERY_DAYS,
+  firstDeliveryDate,
+  formatDeliveryDate,
+  toDateKey,
+} from '../lib/delivery.js'
 import icon1 from '../assets/images/icon-1.jpg'
 import icon2 from '../assets/images/icon-2.jpg'
 import icon3 from '../assets/images/icon-3.jpg'
@@ -69,6 +77,9 @@ function Subscribe() {
   const [form, setForm] = useState(EMPTY_CONTACT)
   const [agree, setAgree] = useState(false)
   const [payMethod, setPayMethod] = useState(PAY_METHODS[0])
+  // 배송 요일 월~금, 첫 배송일은 다음 날부터 가장 가까운 그 요일 (답변 2026-11-17)
+  const [deliveryDay, setDeliveryDay] = useState(DEFAULT_DELIVERY_DAY)
+  const firstDelivery = firstDeliveryDate(deliveryDay)
   const [errors, setErrors] = useState({})
   const [done, setDone] = useState(false)
   const doneRef = useRef(null)
@@ -124,6 +135,8 @@ function Subscribe() {
         })),
         price,
         payMethod,
+        deliveryDay,
+        firstDelivery: toDateKey(firstDelivery),
         recipient: pickRecipient(form),
         freeItem: freeProduct ? { id: freeProduct.id, name: freeProduct.name, qty: 1 } : null,
       },
@@ -131,7 +144,7 @@ function Subscribe() {
     )
     if (freeProduct) spendFreeCoupon(member)
     setFreeDone(freeProduct?.name ?? null)
-    setDone({ no, guest })
+    setDone({ no, guest, day: deliveryDay, firstDelivery })
   }
 
   // 신청 후 양식 자리가 완료 문구로 바뀌고 그 위치로 스크롤
@@ -298,6 +311,12 @@ function Subscribe() {
                     onChange={changeField}
                     guest={!member}
                   />
+                  <DeliveryDayPicker
+                    id="f-day"
+                    value={deliveryDay}
+                    onChange={setDeliveryDay}
+                    hint={`매주 ${DELIVERY_DAYS[deliveryDay]}요일에 받아요. 첫 배송은 ${formatDeliveryDate(firstDelivery)}이에요.`}
+                  />
                   {/* 결제 방식: 고르기만 하고 실제 결제는 없음 (답변 2026-11-13) */}
                   <div className="field">
                     <p id="pay-label" className="pay-label">
@@ -362,7 +381,8 @@ function Subscribe() {
                       <span>{formatWon(price.total)}</span>
                     </div>
                     <p className="summary-note">
-                      주 1회 배송, 매회 이 금액이에요.
+                      매주 {DELIVERY_DAYS[deliveryDay]}요일 배송, 매회 이 금액이에요.
+                      <br />첫 배송 {formatDeliveryDate(firstDelivery)}
                     </p>
                   </aside>
                   {errors.items && <p className="field-error">{errors.items}</p>}
@@ -387,7 +407,8 @@ function Subscribe() {
             <h2 className="complete-title">정기배송 신청이 완료됐어요</h2>
             <OrderNoNotice no={done.no} guest={done.guest} />
             <p className="complete-body">
-              주 1회 배송으로 신청했어요.
+              매주 {DELIVERY_DAYS[done.day]}요일에 받아요. 첫 배송은{' '}
+              {formatDeliveryDate(done.firstDelivery)}이에요.
               <br />
               {freeDone && (
                 <>
@@ -395,7 +416,8 @@ function Subscribe() {
                   <br />
                 </>
               )}
-              구성 변경과 해지는 조건 없이 언제든 간단하게 할 수 있어요.
+              구성 변경과 해지는 {done.guest ? '비회원 주문 조회' : '마이페이지'}에서 조건 없이
+              언제든 할 수 있어요.
             </p>
             <Link to="/" id="P04-B02" className="btn btn-secondary">
               홈으로

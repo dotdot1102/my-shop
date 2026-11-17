@@ -2,7 +2,14 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { RequiredMark } from '../components/ContactFields.jsx'
 import { formatWon } from '../lib/pricing.js'
-import { cancelGuestOrder, findGuestOrder, ORDER_STATUS } from '../lib/storage.js'
+import {
+  cancelGuestOrder,
+  findGuestOrder,
+  ORDER_STATUS,
+  updateGuestSubscription,
+} from '../lib/storage.js'
+import SubscriptionEditor from '../components/SubscriptionEditor.jsx'
+import DeliveryLine from '../components/DeliveryLine.jsx'
 import './OrderLookup.css'
 
 // 비회원 주문 조회 (답변 2026-11-16)
@@ -24,6 +31,8 @@ function OrderLookup() {
   const [record, setRecord] = useState(null)
   // 조회에 쓴 비밀번호 — 취소할 때 다시 확인
   const [checkedPassword, setCheckedPassword] = useState('')
+  // 정기배송 구성 변경 열림 (답변 2026-11-17)
+  const [editing, setEditing] = useState(false)
 
   async function handleLookup(event) {
     event.preventDefault()
@@ -33,6 +42,7 @@ function OrderLookup() {
     else if (!/^\d{4}$/.test(password)) next.password = '주문 비밀번호를 숫자 4자리로 입력해 주세요.'
     setErrors(next)
     setRecord(null)
+    setEditing(false)
     if (Object.keys(next).length > 0) {
       document.getElementById(next.no ? 'lk-no' : 'lk-password')?.focus()
       return
@@ -52,6 +62,12 @@ function OrderLookup() {
     if (!window.confirm(question)) return
     const updated = await cancelGuestOrder(record.no, checkedPassword)
     if (updated) setRecord(updated)
+  }
+
+  async function handleSave(changes) {
+    const updated = await updateGuestSubscription(record.no, checkedPassword, changes)
+    if (updated) setRecord(updated)
+    setEditing(false)
   }
 
   const canCancel = record && (record.status === 'received' || record.status === 'active')
@@ -172,6 +188,12 @@ function OrderLookup() {
                   )}
                 </dd>
               </div>
+              {record.kind === 'subscription' && (
+                <div>
+                  <dt>배송 요일</dt>
+                  <DeliveryLine record={record} as="dd" />
+                </div>
+              )}
               <div>
                 <dt>{record.kind === 'order' ? '결제 금액' : '1회 배송 금액'}</dt>
                 <dd className="detail-price">{formatWon(record.price?.total ?? 0)}</dd>
@@ -195,10 +217,24 @@ function OrderLookup() {
               </div>
             </dl>
 
-            {canCancel && (
-              <button type="button" className="btn btn-secondary" onClick={handleCancel}>
-                {record.kind === 'order' ? '주문 취소' : '정기배송 해지'}
-              </button>
+            {canCancel && !editing && (
+              <div className="lookup-btns">
+                {record.kind === 'subscription' && (
+                  <button type="button" className="btn btn-secondary" onClick={() => setEditing(true)}>
+                    구성 변경
+                  </button>
+                )}
+                <button type="button" className="btn btn-secondary" onClick={handleCancel}>
+                  {record.kind === 'order' ? '주문 취소' : '정기배송 해지'}
+                </button>
+              </div>
+            )}
+            {editing && (
+              <SubscriptionEditor
+                record={record}
+                onCancel={() => setEditing(false)}
+                onSave={handleSave}
+              />
             )}
           </section>
         )}

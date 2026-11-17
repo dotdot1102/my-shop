@@ -8,7 +8,7 @@ import sweetPotatoChips from '../assets/images/P01-S02.sweetpotato.jpg'
 // 상품 6개 (출처: PROJECT_CONTEXT.md 1. 상품) — 당근칩·고구마칩 추가 (답변 2026-11-16)
 // description: 상품 상세 설명 (답변 2026-11-16)
 // name: 포장지와 같은 영문 이름, nameKo: 아래에 작게 붙는 한글 이름 (답변 2026-11-16)
-// howTo: 언제·어떻게 먹을지 (출처: 와이어프레임 P-03 루틴 결과, 답변 2026-11-13). ABC 주스는 [미정]
+// howTo: 언제·어떻게 먹을지 (출처: 와이어프레임 P-03 루틴 결과, 답변 2026-11-13). ABC 주스 · 당근칩 · 고구마칩은 답변 2026-11-16
 export const products = [
   {
     id: 'abc',

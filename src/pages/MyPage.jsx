@@ -4,13 +4,19 @@ import { buildRoutine, CHIPS, TICK_SPOKEN } from '../data/routine.js'
 import { formatWon } from '../lib/pricing.js'
 import {
   cancelMemberRecord,
+  getMember,
   hasFreeCoupon,
   listMemberRecords,
   loadRoutine,
   logOut,
   ORDER_STATUS,
+  updateMemberSubscription,
+  withdraw,
 } from '../lib/storage.js'
 import { useMember } from '../lib/useMember.js'
+import ProfileEditor from '../components/ProfileEditor.jsx'
+import SubscriptionEditor from '../components/SubscriptionEditor.jsx'
+import DeliveryLine from '../components/DeliveryLine.jsx'
 import './MyPage.css'
 
 // 마이페이지 (답변 2026-11-16)
@@ -24,9 +30,11 @@ function formatDate(iso) {
 }
 
 // 주문 · 정기배송 한 건
-function RecordCard({ record, onClose }) {
+// 정기배송 중이면 '구성 변경'으로 상품 · 수량 · 배송 요일을 바꿈 (답변 2026-11-17)
+function RecordCard({ record, onClose, onSave }) {
   const isOrder = record.kind === 'order'
   const open = record.status === 'received' || record.status === 'active'
+  const [editing, setEditing] = useState(false)
   return (
     <li className="my-record">
       <div className="my-record-head">
@@ -46,17 +54,39 @@ function RecordCard({ record, onClose }) {
           <li className="muted">가입 무료 단품 · {record.freeItem.name} × 1</li>
         )}
       </ul>
+      {!isOrder && <DeliveryLine record={record} />}
       <div className="my-record-foot">
         <p>
           <span className="muted">{isOrder ? '결제 금액' : '1회 배송 금액'}</span>{' '}
           <strong>{formatWon(record.price?.total ?? 0)}</strong>
         </p>
-        {open && (
-          <button type="button" className="btn btn-secondary my-record-btn" onClick={onClose}>
-            {isOrder ? '주문 취소' : '정기배송 해지'}
-          </button>
+        {open && !editing && (
+          <div className="my-record-btns">
+            {!isOrder && (
+              <button
+                type="button"
+                className="btn btn-secondary my-record-btn"
+                onClick={() => setEditing(true)}
+              >
+                구성 변경
+              </button>
+            )}
+            <button type="button" className="btn btn-secondary my-record-btn" onClick={onClose}>
+              {isOrder ? '주문 취소' : '정기배송 해지'}
+            </button>
+          </div>
         )}
       </div>
+      {editing && (
+        <SubscriptionEditor
+          record={record}
+          onCancel={() => setEditing(false)}
+          onSave={(changes) => {
+            onSave(changes)
+            setEditing(false)
+          }}
+        />
+      )}
     </li>
   )
 }
@@ -65,6 +95,8 @@ function MyPage() {
   const member = useMember()
   const navigate = useNavigate()
   const [records, setRecords] = useState(() => listMemberRecords(member))
+  const [editingProfile, setEditingProfile] = useState(false)
+  const [profileNotice, setProfileNotice] = useState('')
   const coupon = hasFreeCoupon(member)
   const saved = loadRoutine()
   const routine = saved ? buildRoutine(saved.tick, saved.chip) : null
@@ -82,6 +114,27 @@ function MyPage() {
     if (!window.confirm(question)) return
     cancelMemberRecord(member, record.no)
     setRecords(listMemberRecords(member))
+  }
+
+  function handleSave(record, changes) {
+    updateMemberSubscription(member, record.no, changes)
+    setRecords(listMemberRecords(member))
+  }
+
+  // 회원 정보 수정 · 탈퇴 (답변 2026-11-17)
+  function handleProfileSaved() {
+    setEditingProfile(false)
+    setProfileNotice('회원 정보를 바꿨어요.')
+    // 이메일이 바뀌었을 수 있어 새 회원 정보로 다시 읽음
+    setRecords(listMemberRecords(getMember()))
+  }
+
+  function handleWithdraw() {
+    const question =
+      '정말 탈퇴할까요? 진행 중인 정기배송은 모두 해지되고 계정이 삭제돼요. 되돌릴 수 없어요.'
+    if (!window.confirm(question)) return
+    withdraw(member)
+    navigate('/')
   }
 
   return (
@@ -104,9 +157,34 @@ function MyPage() {
               <dd>{member.email}</dd>
             </div>
           </dl>
-          <button type="button" className="btn btn-secondary my-logout" onClick={handleLogOut}>
-            로그아웃
-          </button>
+          {profileNotice && (
+            <p className="my-notice" role="status">
+              {profileNotice}
+            </p>
+          )}
+          {editingProfile ? (
+            <ProfileEditor
+              member={member}
+              onCancel={() => setEditingProfile(false)}
+              onSaved={handleProfileSaved}
+            />
+          ) : (
+            <div className="my-profile-btns">
+              <button
+                type="button"
+                className="btn btn-secondary my-logout"
+                onClick={() => {
+                  setProfileNotice('')
+                  setEditingProfile(true)
+                }}
+              >
+                회원 정보 수정
+              </button>
+              <button type="button" className="btn btn-secondary my-logout" onClick={handleLogOut}>
+                로그아웃
+              </button>
+            </div>
+          )}
         </section>
 
         {/* 쿠폰 — 가입 혜택 무료권 (답변 2026-11-16: '가입 혜택' → '쿠폰') */}
@@ -166,7 +244,12 @@ function MyPage() {
           ) : (
             <ul className="my-records">
               {records.subscriptions.map((r) => (
-                <RecordCard key={r.no} record={r} onClose={() => handleClose(r)} />
+                <RecordCard
+                  key={r.no}
+                  record={r}
+                  onClose={() => handleClose(r)}
+                  onSave={(changes) => handleSave(r, changes)}
+                />
               ))}
             </ul>
           )}
@@ -207,6 +290,17 @@ function MyPage() {
               </Link>
             </p>
           )}
+        </section>
+
+        {/* 회원 탈퇴 (답변 2026-11-17) */}
+        <section className="my-section" aria-labelledby="my-withdraw-title">
+          <h2 id="my-withdraw-title" className="my-title">
+            회원 탈퇴
+          </h2>
+          <p className="my-empty">진행 중인 정기배송은 모두 해지되고 계정이 삭제돼요.</p>
+          <button type="button" className="btn btn-secondary my-logout" onClick={handleWithdraw}>
+            회원 탈퇴
+          </button>
         </section>
       </main>
     </div>
