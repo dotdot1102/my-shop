@@ -131,7 +131,7 @@ function Routine() {
 
           {/* P03-S04 루틴 혜택 안내 */}
           <div id="P03-S04" className="routine-benefit">
-            <p>이 루틴으로 정기배송을 시작하면, 첫 회 배송비는 무료예요.</p>
+            <p>이 루틴으로 정기배송을 시작하면, 배송비는 매회 무료예요.</p>
             <Link
               to="/subscribe"
               state={{ tab: 'routine' }}
